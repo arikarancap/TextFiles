@@ -1,0 +1,286 @@
+import React, { useState, useEffect } from "react";
+import { View, Text, StyleSheet, ScrollView, Alert, SafeAreaView, Keyboard } from 'react-native';
+import { Loader, CustomButton, Input, ImageSlider } from '../../components';
+import { useLogin } from '../../Main/LoginProvider';
+import { COLORS, PORT } from '../../constants';
+
+export function Forgot({ navigation }) {
+    //  confirm Password icons
+    const { setIsLoggedIn, SubMenu, setSubMenu } = useLogin();
+    const [input, setInput] = React.useState({
+        username: '',
+        hint: '',
+        answer: '',
+        password: '',
+        confirmPassword: '',
+        datas: '',
+        validuser: '',
+        validanswer: ''
+    })
+    const [errors, setError] = React.useState({});
+    const [loading, setLoading] = React.useState(false);
+    const [data, setData] = React.useState([{ title: 'First Title' }]);
+    const useFetch = () => {
+        fetch(PORT, {
+            method: 'GET'
+        })
+            .then(res => res.json())
+            // .then(data => { setData(data)})
+            .then(data => {
+                console.log(data)
+                handleOnChange(data, 'datas')
+            })
+            .catch(err => console.log("Error Acquired", err));
+    }
+    useEffect(() => {
+        useFetch()
+    }, [])
+    const validate = () => {
+        console.log("Enter to validate...")
+        // console.log(input.username)
+        let isValid = true;
+        Keyboard.dismiss();
+        if (!input.password) {
+            handleError('please enter a password', 'password');
+            isValid = false;
+        }
+        else if (input.password.length < 5) {
+            handleError('Mininimum Password must be at least 5 characters', 'password');
+            isValid = false;
+        }
+        if (!input.confirmPassword) {
+            handleError('please enter a confirm password', 'confirmPassword');
+            isValid = false;
+        }
+        else if (input.confirmPassword.length < 5) {
+            console.log('Mininimum Password must be at least 5 characters')
+            handleError('Mininimum Password must be at least 5 characters', 'confirmPassword');
+            isValid = false;
+        }
+        if (input.password === input.confirmPassword) {
+
+        } else {
+            handleError('password not match', 'confirmPassword');
+        }
+        if (isValid) {
+            console.log('isValid: ', isValid);
+            register();
+        }
+    }
+    const register = async () => {
+        if (input.password === input.confirmPassword) {
+            console.log("password and confirm Password same...")
+            input.datas.map(async (item) => {
+                if (item.username === input.username.trim()) {
+                    temp1 = item.hint
+                    temp2 = item.answer
+                    const options = {
+                        method: 'PUT',
+                        headers: {
+                            Accept: 'application/json',
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            "username": input.username,
+                            "password": input.password,
+                            "hint": temp1,
+                            "answer": temp2
+                        }),
+                    };
+                    try {
+                        // const response = await fetch(`http://192.168.113.220/user/${item.id}/`, options);
+                        const response = await fetch(`${PORT}${item.id}/`, options);
+                        const responseData = await response.json();
+                        console.log(responseData);
+                        navigation.navigate("Login")
+
+                    } catch (error) {
+                        console.error(error);
+                    }
+                    console.log("Enter User is New User...")
+
+                }
+                else {
+                    // setValid(true)
+                    console.log("new user")
+                }
+            })
+        }
+        else {
+            handleError("password not match", 'confirmpassword')
+
+        }
+    };
+    const handleOnChange = (text, input) => {
+        setInput(prevState => ({ ...prevState, [input]: text }))
+    }
+    const handleError = (error, input) => {
+        setError((prevState) => ({ ...prevState, [input]: error }))
+
+    }
+    const check1 = () => {
+        let isValid = true;
+        if (!input.username) {
+            handleError("please enter a valid username", 'username')
+            isValid = false;
+        }
+        // console.log(input.username.match(/\S+@\S+\.\S+/))
+        else if (input.username.length < 3) {
+            handleError('username atleast 3 characters', 'username');
+            isValid = false;
+        }
+        const temp = input.datas.some(checkUser)
+        console.log(temp);
+        function checkUser(item) {
+            return item.username === input.username.trim();
+        }
+        if (temp) {
+            handleOnChange(temp, 'validuser')
+
+        } else {
+            handleError('User Not Valid', 'username');
+
+        }
+
+        input.datas.map(async (item) => {
+            console.log(item.username, item.password)
+            if (item.username === input.username) {
+                isValid = true;
+                handleOnChange(item.hint, 'hint')
+                console.log("user valid")
+            }
+            else {
+                // isValid = true;
+                // console.log("new user")
+            }
+        })
+    }
+    const check2 = () => {
+        if (!input.answer) {
+            handleError('please enter a answer', 'answer');
+            isValid = false;
+        } else if (input.answer.length < 3) {
+            handleError('answer atleast 3 characters', 'answer');
+        }
+        const temp = input.datas.some(checkUser)
+        console.log(temp);
+        function checkUser(item) {
+            return item.answer === input.answer.trim();
+        }
+        if (temp) {
+            handleOnChange(temp, 'validanswer')
+
+        } else {
+            handleError('answer not correct', 'answer');
+
+        }
+
+    }
+    return (
+        <SafeAreaView style={{ backgroundColor: COLORS.white, flex: 1 }} >
+            <Loader visible={loading} />
+            <ScrollView contentContainerStyle={{
+                paddingTop: 50,
+                paddingHorizontal: 20,
+                // alignItems: 'center'
+            }} >
+                <Text style={{ color: COLORS.black, fontSize: 40, fontWeight: 'bold' }} >
+                    Forgot Password
+                </Text>
+                <Text style={{ color: COLORS.grey, fontSize: 18, marginVertical: 10, fontSize: 16 }}>Enter Your Details Reset Password</Text>
+                <View style={{ marginVertical: 20 }} ></View>
+                <Input label="Username"
+                    iconName='account-outline'
+                    placeHolder="Enter Your Username"
+                    onChangeText={text => handleOnChange(text, 'username')}
+                    Value={input.username}
+                    error={errors.username}
+                    onFocus={() => {
+                        handleError(null, 'username')
+                    }}
+                    margin={1}
+                />
+                {!input.validuser ?
+                    <CustomButton
+                        title={'Next1'}
+                        onPress={check1}
+                    /> : ''}
+
+                {/* <Text >hello: {input.username}</Text> */}
+                {/* {input.validuser ?
+                    <View style={{}} >
+                        <Text style={{ fontSize: 14, marginBottom: 10, fontWeight: '500' }} >{input.hint}</Text>
+                        <Input label="Answer"
+                            iconName='pencil'
+                            // keyBoardType='numeric'
+                            placeHolder="Enter Your Answer"
+                            onChangeText={text => handleOnChange(text, 'answer')}
+                            error={errors.answer}
+                            onFocus={() => {
+                                handleError(null, 'answer')
+                            }}
+                        />
+                        {!input.validanswer ?
+                            <CustomButton
+                                title={'Next2'}
+                                onPress={check2}
+                            /> : ''}
+                    </View>
+                    : ''
+
+                } */}
+
+
+                {input.validuser ? <View>
+                    <Input label="Password" iconName='lock-outline'
+                        placeHolder="Enter Your Password"
+                        password
+                        onChangeText={text => handleOnChange(text, 'password')}
+                        Value={input.password}
+                        error={errors.password}
+                        onFocus={() => {
+                            handleError(null, 'password')
+                        }}
+                    />
+                    <Input label="Confirm Password" iconName='lock-outline'
+                        placeHolder="Enter Your Confirm Password"
+                        confirmPassword
+                        onChangeText={text => handleOnChange(text, 'confirmPassword')}
+                        Value={input.confirmPassword}
+                        error={errors.confirmPassword}
+                        onFocus={() => {
+                            handleError(null, 'confirmPassword')
+                        }}
+                    />
+                    <CustomButton
+                        title={'Register'}
+                        onPress={validate}
+                    />
+                </View> : ''}
+
+                <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', width: '100%', margin: 2 }} >
+                    <Text
+                        onPress={() => navigation.navigate("Login")}
+                        style={styles.text}>
+                        Already have account ?
+                    </Text>
+                    <Text
+                        onPress={() => navigation.navigate("Login")}
+                        style={[styles.text, { color: COLORS.blue, marginLeft: 5 }]}>Login</Text>
+                </View>
+                {/* <TouchableOpacity style={{ backgroundColor: 'red', width: 200, height: 40 }} >
+                <Text>sdnfjkdnsn</Text>
+            </TouchableOpacity> */}
+            </ScrollView>
+        </SafeAreaView>
+    );
+}
+const styles = StyleSheet.create({
+    text: {
+        color: COLORS.black,
+        textAlign: 'center',
+        fontWeight: 'bold',
+        fontSize: 16,
+        marginBottom: 15
+    }
+});

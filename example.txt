@@ -1,0 +1,430 @@
+    sharing = async () => {
+        console.log('words');
+        RNFS.readFileAssets('hello.txt').then(result => {
+            const word = result.split(',');
+            const words = word.toString()
+            console.log(typeof (words))
+            this.setState({ sendBluetooth: words })
+
+        })
+        const filePath = 'android/app/src/main/assets/hello.txt';
+        const mimeType = 'text/plain';
+
+        shareOptions = {
+            // message: "0x1000:0x97:0xA7:0xB7:0x45:0x2000:0xABCD:0x9100:0x04:100.0:100:0x64:100:1.35:100:25:0.0:200:50:5.68:300:75:0.0:500:50:0x9200:0x08:100.0:100:0x64:100:1.35:100:25:0.0:200:50:5.68:300:75:0.0:500:50:1.35:100:25:0.0:200:50:5.68:300:75:0.0:500:50:0x9300:0x0C:100.0:100:0x64:100:1.35:100:25:0.0:200:50:5.68:300:75:0.0:500:50:1.35:100:25:0.0:200:50:5.68:300:75:0.0:500:50:1.35:100:25:0.0:200:50:5.68:300:75:0.0:500:50",
+            // title: `Share ${fileName}`,
+            // url: `file://${JSON.stringify(this.state.sendBluetooth)}`,
+            // type: 'text/txt',
+            message: this.state.sendBluetooth,
+        
+            type: 'text/plain',
+        }
+        try {
+            const ShareResponse = await Share.open(shareOptions);
+        }
+        catch (error) {
+            console.log('Error is : ' + error)
+        }
+    }
+
+
+#######################################app.js inside a project#########################################################
+
+const express = require('express');
+const app = express();
+const bodyParser = require('body-parser');
+const mongoose = require('mongoose');
+const cors = require('cors');
+app.use(cors())
+require('./Employee');
+
+
+app.use(express.json());
+
+const Employee = mongoose.model('employee');
+const connectUrl = "mongodb+srv://arikara729:arikaran@cluster0.cgyowhi.mongodb.net/?retryWrites=true&w=majority"
+
+
+mongoose.connect(connectUrl, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true
+})
+
+mongoose.connection.on("connected", () => {
+    console.log("Connected to mongoose Yeah....")
+})
+mongoose.connection.on("error", (err) => {
+    console.log("Error: " + err);
+})
+
+
+
+app.get('/', (req, res) => {
+    let val = "";
+    Employee.find({})
+        .then(data => {
+            // res.send(data);
+            // val= data
+            console.log(data);
+        })
+        .catch(err => {
+            console.log("Error in binding : ", err);
+        })
+    res.send("Welcome to Nodejs")
+})
+
+app.post('/send', async (req, res) => {
+    const employee = new Employee({
+        name: req.body.name,
+        password: req.body.password,
+    })
+    await employee.save()
+        .then(data => {
+            console.log(data);
+            // res.send("Successfully...")
+        }).catch(err => {
+            console.log("Error in binding : ", err);
+        })
+    // console.log(req.body)
+    res.send('Succesfull...')
+})
+// POST messages
+// app.post('/send', async (req, res) => {
+//     await Message.create({
+//         name: req.body.name,
+//         password: req.body.password,
+//     }).then((message) => {
+//         res.send(message).status(200);
+//     }).catch((err) => {
+//         console.log(err);
+//         res.send(err).status(500);
+//     });
+// });
+app.post('/delete-data', (req, res) => {
+    Employee.findByIdAndRemove(req.body.id)
+        .then(data => {
+            console.log(data);
+            res.send("deleted")
+        }).catch(err => {
+            console.log("Error in deleting : ", err);
+        })
+    // console.log(req.body)
+    res.send('deleted...')
+})
+app.post('/update-data', (req, res) => {
+    Employee.findByIdAndUpdate(req.body.id, {
+        name: req.body.name,
+        password: req.body.password,
+    })
+        .then(data => {
+            console.log(data);
+            // res.send("deleted")
+        }).catch(err => {
+            console.log("Error in updating : ", err);
+        })
+    // console.log(req.body)
+    res.send('updated...')
+})
+
+app.listen(8000, (data) => {
+    console.log('Server Running...', data)
+});
+
+
+##################################################Login.js##########################################33
+import { useState, useEffect } from 'react';
+import { Button, View, SafeAreaView, Text, Image, StyleSheet, TextInput, Alert, ScrollView, Pressable, StatusBar } from 'react-native';
+import { CustomButton } from './CustomButtons'
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { TouchableHighlight } from 'react-native-gesture-handler';
+import { useLogin } from './LoginProvider';
+import axios from 'axios';
+
+export function SignIn({ navigation }) {
+    const [name, setName] = useState('')
+    const [password, setPassword] = useState('')
+    const { setIsLoggedIn } = useLogin();
+    const fetchApi = async () => {
+        try {
+            const res = await axios.get('http://10.10.7.171:8000/')
+            console.log(res.data);
+        }
+        catch (error) {
+            console.log(error.message);
+        }
+    }
+    useEffect(() => {
+        fetchApi()
+    }, [])
+    // useEffect(() => {
+    //     getData();
+    // }, []);
+    // const getData = async () => {
+    //     console.log('its working...'); 
+    //     try {
+    //         AsyncStorage.getItem('UserData')
+    //             .then(value => {
+    //                 if (value != null) {
+    //                     navigation.navigate('LoginShow');
+    //                 }
+    //             })
+    //     }
+    //     catch (error) {
+    //     }
+    // }
+
+    const Authentification = () => {
+        // try {
+        //     AsyncStorage.getItem('UserData')
+        //         .then(value => {
+        //             if (value != null) {
+        //                 let user = JSON.parse(value);
+        //                 // setName(user.Name);
+        //                 // setPassword(user.Password);
+        //                 user.map((item, index) => {
+        //                     console.log(item.name);
+        //                     console.log(item.password)
+        //                 })
+        //             }
+        //         })
+        //     // navigation.navigate('LoginShow')
+
+        // }
+        // catch (error) {
+        //     console.log(error);
+        // }
+        // setIsLoggedIn(true)
+        console.log("Started.....")
+        // fetch("http://10.0.2.2:8000/", {
+        //     method: "GET",
+        // })
+        //     .then((res) => res.json()
+        //         .then((data) => {
+        //             console.log("Retrirved Data From MongoDB : ", data)
+        //         }))
+
+
+    }
+    return (
+        <View style={styles.body} >
+            {/* <StatusBar barStyle="light-content" /> */}
+
+            <Text style={styles.text}>Bluetooth</Text>
+            {/* <Image
+                style={styles.logo}
+                source={require('./assets/images/background.jpg')}
+            /> */}
+            <View style={styles.signInContainer} >
+                <Text style={styles.header}>Sign In</Text>
+                <View style={styles.container}>
+                    <TextInput
+                        style={styles.input}
+                        placeholder='Enter Your Name'
+                        onChangeText={(value) => setName(value)}
+                    />
+                    <TextInput
+                        style={styles.input}
+                        placeholder='Enter Your Password'
+                        keyboardType="SecureTextEntry"
+                        secureTextEntry={true}
+                        onChangeText={(value) => setPassword(value)}
+                    />
+                    <CustomButton
+                        onPressFunction={Authentification}
+                        title='Login'
+                        color='#E50914'
+                    />
+                </View>
+                <Pressable
+                    activeOpacity={0.1}
+                    underlayColor="#DDDDDD"
+                    // hitSlop={{ top: 5, bottom: 5, right: 5, left: 5 }}
+                    onPress={() => navigation.navigate('SignUp')}
+                >
+                    <Text style={{ color: 'white', marginTop: 70, fontSize: 13, }}>New to bluetooth ?  Sign up Now</Text>
+                </Pressable>
+            </View>
+        </View >
+    )
+
+}
+
+export function SignUp({ navigation }) {
+    const [name, setName] = useState('')
+    const [password, setPassword] = useState('')
+    const { setIsLoggedIn } = useLogin();
+
+
+    // const setData = async () => {
+    //     console.log('its working...');
+    //     if (name.length == 0 || password.length == 0) {
+    //         Alert.alert('Warning !', 'Please Write  Your Name');
+    //     } else {
+    //         try {
+    //             var user = {
+    //                 Name: name,
+    //                 Password: password,
+    //             }
+    //             await AsyncStorage.setItem('UserData', JSON.stringify(user));
+    //             // navigation.navigate('Home');
+    //             setIsLoggedIn(true)
+    //         }
+    //         catch (error) {
+    //             console.log(error);
+    //         }
+    //     }
+    // }
+    // useEffect(() => {
+    //     fetch("http://10.0.2.2:8000/")
+    //         .then(res => res.json())
+    //         .then(results => {
+    //             setData(results)
+    //             console.log(results)
+    //         })
+    // }, [])
+
+
+    const submitData = () => {
+        var products = [{
+            "name": "Pizza",
+            "price": "10",
+            "quantity": "7"
+        }, {
+            "name": "Cerveja",
+            "price": "12",
+            "quantity": "5"
+        }, {
+            "name": "Hamburguer",
+            "price": "10",
+            "quantity": "2"
+        }, {
+            "name": "Fraldas",
+            "price": "6",
+            "quantity": "2"
+        }];
+        console.log(name);
+        console.log(password);
+        // console.log(JSON.stringify(products));
+
+        // console.log(JSON.stringify([new Number(3), new String("false"), new Boolean(false)]));
+
+        fetch("http://10.0.2.2:8000/send", {
+            method: "post",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                "name": "vellore",
+                "password": "Stringy Golden Temple"
+            })
+        })
+            .then(res => res.json())
+            .then(data => {
+                console.log(JSON.parse(data));
+            })
+            .catch(err => {
+                console.log('Error', err);
+            });
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    return (
+        <View style={styles.body} >
+
+            {/* <Image
+                style={styles.logo}
+                source={require('./assets/images/download.png')}
+            /> */}
+            <View style={styles.signInContainer} >
+                <Text style={styles.header}>Sign Up</Text>
+                <View style={styles.container}>
+                    <TextInput
+                        style={styles.input}
+                        placeholder='Enter Your Name'
+                        onChangeText={(value) => setName(value)}
+                    />
+                    <TextInput
+                        style={styles.input}
+                        placeholder='Enter Your Password'
+                        keyboardType="SecureTextEntry"
+                        secureTextEntry={true}
+                        onChangeText={(value) => setPassword(value)}
+                    />
+                    <CustomButton
+                        onPressFunction={submitData}
+                        title='Sign Up'
+                        color='#E50914'
+                    />
+                </View>
+                <Pressable
+                    activeOpacity={0.1}
+                    underlayColor="#DDDDDD"
+                    // hitSlop={{ top: 5, bottom: 5, right: 5, left: 5 }}
+                    onPress={() => navigation.navigate('SignIn')}
+                >
+                    <Text style={{ color: 'white', marginTop: 70, fontSize: 13, }}>Goto Login page</Text>
+                </Pressable>
+            </View>
+        </View >
+    )
+
+}
+
+const styles = StyleSheet.create({
+    body: {
+        flex: 1,
+        backgroundColor: '#333',
+    },
+    logo: {
+        // flex: 1,
+    },
+    text: {
+        margin: 25,
+        fontSize: 30,
+        fontWeight: 'bold',
+        color: '#E50914',
+    },
+    header: {
+        marginTop: 20,
+        fontSize: 30,
+        fontWeight: 'bold',
+        color: '#E50914',
+    },
+    input: {
+        width: 300,
+        borderWidth: 1,
+        borderBottomColor: 'white',
+        textAlign: 'center',
+        fontSize: 20,
+        // marginTop: 50,
+        marginBottom: 20,
+        marginLeft: 15,
+        marginRight: 15,
+        backgroundColor: '#737373',
+        color: 'white'
+    },
+    signInContainer: {
+        borderWidth: 1,
+        borderColor: 'white',
+        height: 500,
+        alignItems: 'center',
+        margin: 20,
+        borderRadius: 50
+    },
+    container: {
+        alignItems: 'center',
+        marginTop: 50,
+    }
+});
+
+#############################################################

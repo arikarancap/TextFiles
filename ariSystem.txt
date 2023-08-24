@@ -1,0 +1,131 @@
+import { StyleSheet, Text, View, FlatList, TouchableOpacity, LayoutAnimation, ScrollView, Switch } from 'react-native'
+import React, { useState, useEffect } from 'react'
+import { DATA } from '../../../constants';
+import { COLORS } from '../../../constants';
+import AntDesign from 'react-native-vector-icons/AntDesign'
+import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
+import Share from 'react-native-share';
+import { CustomButton, CustomTab } from '../../../components';
+
+
+
+
+const System = ({ navigation }) => {
+    const [groups, setGroups] = useState('');
+    const [system, setSystem] = useState('Groups');
+    const [isEnabled, setIsEnabled] = useState(false);
+    const toggleSwitch = () => {
+        LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut)
+        setIsEnabled(previousState => !previousState);
+    }
+
+    let entries = Object.entries(DATA.system);
+    // console.log(entries);
+    var groupArray = new Array();
+    DATA.common.groups.map((item, index) => {
+        let group = Object.entries(item);
+        groupArray[index] = group;
+    })
+
+    useEffect(() => {
+        setGroups(groupArray)
+    }, []);
+
+    const toPascalCase = str =>
+        str
+            .match(/[A-Z]{2,}(?=[A-Z][a-z]+[0-9]*|\b)|[A-Z]?[a-z]+[0-9]*|[A-Z]|[0-9]+/g)
+            .map(x => x.charAt(0).toUpperCase() + x.slice(1).toLowerCase())
+            .join(' ');
+    // console.log(toPascalCase('some_database_field_name'));
+    return (
+        <View style={{ flex: 1 }} >
+            <ScrollView>
+                <View style={{ backgroundColor: 'lightgrey', borderRadius: 20, marginTop: 10 }}>
+                    <View style={{ justifyContent: 'center', alignItems: 'flex-end', marginRight: '10%', marginTop: '3%' }}>
+                        <AntDesign name={'edit'} size={25} color={'green'}
+                            onPress={() => {
+                                LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut)
+                            }}
+                        />
+                    </View>
+                    <View style={{
+                        // width: '95%',
+                        backgroundColor: 'lightgrey',
+                        borderRadius: 15,
+                        alignItems: 'center',
+                        margin: 5,
+                        padding: 5
+                    }} >
+
+                        {
+                            entries.map((item, index) => {
+                                return (
+                                    <View style={styles.container} key={index} >
+                                        <Text style={[styles.containerText, { textAlign: 'justify' }]}>{toPascalCase(item[0])}</Text>
+                                        {/* <Text style={[styles.containerText, { width: 10 }]}>:</Text> */}
+                                        <Text style={[styles.containerText, { width: 165, textAlign: 'center' }]}>{item[1] === true ? 'True' : item[1] === false ? 'False' : item[1]}</Text>
+                                    </View>
+                                )
+                            })
+                        }
+                    </View>
+                </View>
+                {/* Groups Data */}
+
+            </ScrollView >
+        </View >
+
+    )
+}
+export default System
+const styles = StyleSheet.create({
+    text1: {
+        flex: 1, marginLeft: 15, color: COLORS.black, padding: 10
+    },
+    text2: {
+        flex: 1, fontSize: 20, textAlign: 'center', color: COLORS.white, fontWeight: 'bold', letterSpacing: 5
+
+    },
+    text3: {
+        flex: 1, marginRight: 10, textAlign: 'right', color: COLORS.black,
+    },
+    header: {
+        display: 'flex',
+        width: '100%',
+        height: 50,
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center',
+        backgroundColor: COLORS.darkBlue,
+    },
+    headerContainer: {
+        justifyContent: 'center', height: 30, marginBottom: 8, marginLeft: 20,
+    },
+    headerText: {
+        color: COLORS.black, fontWeight: 'bold', fontSize: 18
+    },
+    container: {
+        flexDirection: 'row', alignItems: 'center', justifyContent: 'space-around'
+    },
+    containerText: {
+        color: COLORS.black, fontSize: 14, marginHorizontal: 8, width: '50%', fontWeight: '400', marginVertical: 5
+    },
+    Tab: {
+        height: 40,
+        backgroundColor: 'lightgreen',
+        // width: 180,
+        width: '46%',
+        margin: 10,
+        alignItems: 'center',
+        justifyContent: 'center',
+        borderRadius: 5,
+
+    },
+    TabText: {
+        color: COLORS.black, fontSize: 15,
+    },
+    GroupContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+    }
+})

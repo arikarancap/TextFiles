@@ -1,0 +1,229 @@
+import React, { useState, useEffect } from "react";
+import { View, Text, StyleSheet, ScrollView, Alert, SafeAreaView, Keyboard } from 'react-native';
+import { Loader, CustomButton, Input, ImageSlider } from '../../components';
+import { useLogin } from '../../Main/LoginProvider';
+import { COLORS, PORT } from '../../constants';
+export function SignUp({ navigation }) {
+    //  confirm Password icons
+    const { setIsLoggedIn, SubMenu, setSubMenu } = useLogin();
+    const [input, setInput] = React.useState({
+        username: '',
+        recoverQuestion: '',
+        answer: '',
+        password: '',
+        confirmPassword: '',
+    })
+    const [errors, setError] = React.useState({});
+    const [loading, setLoading] = React.useState(false);
+    const [data, setData] = React.useState([{ title: 'First Title' }]);
+    const useFetch = () => {
+        fetch(PORT, {
+            method: 'GET'
+        })
+            .then(res => res.json())
+            // .then(data => { setData(data)})
+            .then(data => {
+                // console.log(data)
+                setData(data)
+            })
+            .catch(err => console.log("Error Acquired", err));
+    }
+    useEffect(() => {
+        useFetch()
+    }, [])
+    const validate = () => {
+        console.log("Enter to validate...")
+        // console.log(input.username)
+        let isValid = true;
+        var reg = /^([A-Za-z0-9_\-\.])+\@([A-Za-z0-9_\-\.])+\.([A-Za-z]{2,4})$/;
+        Keyboard.dismiss();
+        if (input.username) {
+            data.map(async (item) => {
+                // console.log(item.username, item.password)
+                if (item.username === input.username) {
+                    isValid = false;
+                    handleError("Username already exist", 'username')
+                    // Alert.alert("User Already Exist", "Please Enter New Username")
+                }
+                else {
+                    isValid = true;
+                    // console.log("new user")
+                }
+            })
+        }
+        if (!input.username) {
+            handleError("please enter a valid username", 'username')
+            isValid = false;
+        }
+        // console.log(input.username.match(/\S+@\S+\.\S+/))
+        else if (input.username.length < 3) {
+            handleError('username atleast 3 characters', 'username');
+            isValid = false;
+        }
+        if (!input.recoverQuestion) {
+            handleError('please enter a recoveryQuestion', 'recoverQuestion');
+            isValid = false;
+
+        }
+        if (!input.answer) {
+            handleError('please enter a answer', 'answer');
+            isValid = false;
+
+        }
+        if (!input.password) {
+            handleError('please enter a password', 'password');
+            isValid = false;
+        } else if (input.password.length < 5) {
+            handleError('Mininimum Password must be at least 5 characters', 'password');
+            isValid = false;
+
+        }
+        if (!input.confirmPassword) {
+            handleError('please enter a confirm password', 'confirmPassword');
+            isValid = false;
+        }
+        else if (input.confirmPassword.length < 5) {
+            console.log('Mininimum Password must be at least 5 characters')
+            handleError('Mininimum Password must be at least 5 characters', 'confirmPassword');
+            isValid = false;
+        }
+        if (input.password === input.confirmPassword) {
+
+        } else {
+            handleError('password not match', 'confirmPassword');
+        }
+        if (isValid) {
+            console.log('isValid: ', isValid);
+            register();
+        }
+    }
+    const register = async () => {
+        const options = {
+            method: 'POST',
+            headers: {
+                Accept: 'application/json',
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                "username": input.username,
+                "password": input.password,
+                "hint": input.recoverQuestion,
+                "answer": input.password
+            }),
+        };
+
+        try {
+            const response = await fetch(PORT, options);
+            const responseData = await response.json();
+            console.log(responseData);
+            useFetch()
+        } catch (error) {
+            console.error(error);
+        }
+        setInput({
+            username: '',
+            password: '',
+            hint: '',
+            answer: '',
+        })
+    };
+    const handleOnChange = (text, input) => {
+        setInput(prevState => ({ ...prevState, [input]: text }))
+    }
+    const handleError = (error, input) => {
+        setError((prevState) => ({ ...prevState, [input]: error }))
+
+    }
+    return (
+        <SafeAreaView style={{ backgroundColor: COLORS.white, flex: 1 }} >
+            <Loader visible={loading} />
+            <ScrollView contentContainerStyle={{
+                paddingTop: 10,
+                paddingHorizontal: 20,
+                // alignItems: 'center'
+            }} >
+                <Text style={{ color: COLORS.black, fontSize: 40, fontWeight: '600' }} >
+                    Register
+                </Text>
+                <Text style={{ color: COLORS.grey, fontSize: 18, marginTop: 10 }}>Enter Your Details to Register</Text>
+                <View style={{ marginVertical: 10 }} ></View>
+                <Input label="Username" iconName='account-outline'
+                    placeHolder="Enter Your Username"
+                    Value={input.username}
+                    onChangeText={text => handleOnChange(text, 'username')}
+                    error={errors.username}
+                    onFocus={() => {
+                        handleError(null, 'username')
+                    }}
+                />
+                {/* <Text >hello: {input.username}</Text> */}
+                <Input label="RecoveryQuestion" iconName='comment-question'
+                    placeHolder="Enter Your Recovery Question"
+                    onChangeText={text => handleOnChange(text, 'recoverQuestion')}
+                    error={errors.recoverQuestion}
+                    Value={input.recoverQuestion}
+                    onFocus={() => {
+                        handleError(null, 'recoverQuestion')
+                    }}
+                />
+                <Input label="Answer"
+                    iconName='pencil'
+                    // keyBoardType='numeric'
+                    placeHolder="Enter Your Answer"
+                    onChangeText={text => handleOnChange(text, 'answer')}
+                    error={errors.answer}
+                    Value={input.answer}
+                    onFocus={() => {
+                        handleError(null, 'answer')
+                    }}
+                />
+                <Input label="Password" iconName='lock-outline'
+                    placeHolder="Enter Your Password"
+                    password
+                    onChangeText={text => handleOnChange(text, 'password')}
+                    Value={input.password}
+                    error={errors.password}
+                    onFocus={() => {
+                        handleError(null, 'password')
+                    }}
+                />
+                <Input label="Confirm Password" iconName='lock-outline'
+                    placeHolder="Enter Your Confirm Password"
+                    confirmPassword
+                    onChangeText={text => handleOnChange(text, 'confirmPassword')}
+                    Value={input.confirmPassword}
+                    error={errors.confirmPassword}
+                    onFocus={() => {
+                        handleError(null, 'confirmPassword')
+                    }}
+                />
+                <CustomButton
+                    title={'Register'}
+                    onPress={validate}
+                />
+                <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', width: '100%', margin: 2 }} >
+                    <Text
+                        onPress={() => navigation.navigate("Login")}
+                        style={styles.text}>
+                        Already have account ?
+                    </Text>
+                    <Text
+                        onPress={() => navigation.navigate("Login")}
+                        style={[styles.text, { color: COLORS.blue, marginLeft: 5 }]}>Login</Text>
+                </View>
+                {/* <TouchableOpacity style={{ backgroundColor: 'red', width: 200, height: 40 }} >
+                <Text>sdnfjkdnsn</Text>
+            </TouchableOpacity> */}
+            </ScrollView>
+        </SafeAreaView>
+    );
+}
+const styles = StyleSheet.create({
+    text: {
+        color: COLORS.black,
+        textAlign: 'center',
+        fontWeight: 'bold',
+        fontSize: 16,
+        marginBottom: 15
+    }
+});

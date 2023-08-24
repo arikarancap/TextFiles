@@ -1,0 +1,563 @@
+meeting Id: 96259809829
+password: 123456          
+
+
+else if (n === '100.0') {
+                     values.push('  max_freq: ' + n)
+                 values.push(['max_freq' , n])
+                 console.log('max_freq' , n)
+        
+                 }
+                 else if (n === '1000') {
+                     values.push(['Max_dur' , n])
+                 }
+                 else if (n === '100' && temp === 1) {
+                     values.push(['  Max_duty' , n]);
+                     temp = 2
+        
+                 }
+                 else if (n === '100' && temp === 2) {
+                     values.push(['Max_offset' , n])
+                     temp = 3
+                 }
+                 else if (offset === offset && gate < 4) {
+                     console.log('subPulse_' + offset + ' freq ' + n)
+                     values.push(['subPulse_' + offset + ' freq ' , n])
+        
+                     //  offset==2;
+                     gate = gate + 1;
+                 }
+                 if (gate === 4) {
+                     gate = 1
+                     offset = offset + 1
+                 }
+        
+             })
+        }
+        else if(msg1=='slot_1' && msg2=='channel_2'){
+            console.log(words[1]);
+            setData(words[1]);
+        }
+        else if(msg1=='slot_1' && msg2=='channel_3'){
+            console.log(words[2]);
+            setData(words[2]);
+        }
+        else if(msg1=='slot_1' && msg2=='channel_4'){
+            console.log(words[3]);
+            setData(words[3]);
+        }
+        else if(msg1=='slot_2' && msg2=='channel_1'){
+            console.log(words[4]);
+            setData(words[4]);
+        }
+        else if(msg1=='slot_2' && msg2=='channel_2'){
+            console.log(words[5]);
+            setData(words[5]);
+        }
+        else if(msg1=='slot_2' && msg2=='channel_3'){
+            console.log(words[6]);
+            setData(words[6]);
+        }
+        else if(msg1=='slot_2' && msg2=='channel_4'){
+            console.log(words[7]);
+            setData(words[7]);
+        }
+        else if(msg1=='slot_3' && msg2=='channel_1'){
+            console.log(words[8]);
+            setData(words[8]);
+        }
+        else if(msg1=='slot_3' && msg2=='channel_2'){
+            console.log(words[9]);
+            setData(words[9]);
+        }
+        else if(msg1=='slot_3' && msg2=='channel_3'){
+            console.log(words[10]);
+            setData(words[10]);
+        }
+        else if(msg1=='slot_3' && msg2=='channel_4'){
+            console.log(words[11]);
+            setData(words[11]);
+        }
+        else if(msg1=='slot_4' && msg2=='channel_1'){
+            console.log(words[12]);
+            setData(words[12]);
+        }
+        else if(msg1=='slot_4' && msg2=='channel_2'){
+            console.log(words[13]);
+            setData(words[13]);
+        }
+        else if(msg1=='slot_4' && msg2=='channel_3'){
+            console.log(words[14]);
+            setData(words[14]);
+        }
+        else if(msg1=='slot_4' && msg2=='channel_4'){
+            console.log(words[15]);
+            setData(words[15]);
+        }
+
+
+#####################################################################################
+        <View style={styles.container}>
+            <View style={styles.subContainer}>
+                <View style={{ flexDirection: 'row' }}>
+                    <Text style={[styles.textStyle, { flex: 1.5, paddingLeft: 40 }]}>Max_num_of_subpulse</Text>
+                    <Text style={[styles.textStyle, { textAlign: 'left' }]}>: 0x04</Text>
+                </View>
+            </View>
+            <View style={styles.subContainer}>
+                <View style={{ flexDirection: 'row' }}>
+                    <Text style={[styles.textStyle, { flex: 1.5, paddingLeft: 40 }]}>max_freq</Text>
+                    <Text style={[styles.textStyle, { textAlign: 'left' }]}>: 100.0</Text>
+                </View>
+            </View>
+            <View style={styles.subContainer}>
+                <View style={{ flexDirection: 'row' }}>
+                    <Text style={[styles.textStyle, { flex: 1.5, paddingLeft: 40 }]}>Max_dur</Text>
+                    <Text style={[styles.textStyle, { textAlign: 'left' }]}>: 1000</Text>
+                </View>
+            </View>
+            <View style={styles.subContainer}>
+                <View style={{ flexDirection: 'row' }}>
+                    <Text style={[styles.textStyle, { flex: 1.5, paddingLeft: 40 }]}>Max_duty</Text>
+                    <Text style={[styles.textStyle, { textAlign: 'left' }]}>: 100</Text>
+                </View>
+            </View>
+            <View style={styles.subContainer}>
+                <View style={{ flexDirection: 'row' }}>
+                    <Text style={[styles.textStyle, { flex: 1.5, paddingLeft: 40 }]}>Max_offset</Text>
+                    <Text style={[styles.textStyle, { textAlign: 'left' }]}>: 100</Text>
+                </View>
+            </View>
+            <View style={styles.subContainer}>
+                <View style={{ flexDirection: 'row' }}>
+                    <Text style={[styles.textStyle, { flex: 1.5, paddingLeft: 40 }]}>subPulse_1 freq</Text>
+                    <Text style={[styles.textStyle, { textAlign: 'left' }]}>: 1.35</Text>
+                </View>
+            </View>
+            <View style={styles.subContainer}>
+                <View style={{ flexDirection: 'row' }}>
+                    <Text style={[styles.textStyle, { flex: 1.5, paddingLeft: 40 }]}>subPulse_1 dur</Text>
+                    <Text style={[styles.textStyle, { textAlign: 'left' }]}>: 100</Text>
+                </View>
+            </View>
+            <View style={styles.subContainer}>
+                <View style={{ flexDirection: 'row' }}>
+                    <Text style={[styles.textStyle, { flex: 1.5, paddingLeft: 40 }]}>subPulse_1 duty</Text>
+                    <Text style={[styles.textStyle, { textAlign: 'left' }]}>: 25</Text>
+                </View>
+            </View>
+            <View style={styles.subContainer}>
+                <View style={{ flexDirection: 'row' }}>
+                    <Text style={[styles.textStyle, { flex: 1.5, paddingLeft: 40 }]}>subPulse_4 duty</Text>
+                    <Text style={[styles.textStyle, { textAlign: 'left' }]}>: 50</Text>
+                </View>
+            </View>
+        </View>
+        ##############################                  preconfig                #########################
+        export function PreConfig() {
+    const [bluetoothOns, setBluetoothOn] = useState(true);
+    const [submitted, setSubmitted] = useState(false);
+    const [scan, setScan] = useState(true);
+    const [isEnabled, setIsEnabled] = useState(false);
+    const [allDevices, setAllDevices] = useState([
+        { id: 1, name: "Realme Wireless Buds 2" },
+        { id: 2, name: "One Plus 7T" },
+        { id: 3, name: "Boat Airdopes 138" },]);
+    const [availableDevice, setAvailableDevice] = useState('');
+    const [availableDeviceId, setAvailableDeviceId] = useState('');
+    const [device, setDevice] = useState([]);
+
+    const toggleSwitch = () => {
+        setIsEnabled(previousState => !previousState);
+        if (isEnabled === false) {
+            enable();
+        }
+        if (isEnabled === true) {
+            disable();
+        }
+    }
+
+    const onPressHandler = () => {
+        setSubmitted(!submitted);
+    }
+    const onPressScan = () => {
+        setScan(!scan);
+        openModal();
+    }
+
+    const enable = () => {
+        return BluetoothStateManager.enable().then((result) => {
+            // do something...
+            console.log('enable');
+        });
+    }
+    const disable = () => {
+        return BluetoothStateManager.disable().then((result) => {
+            // do something...
+            console.log('disable');
+        });
+    }
+    const requestPermissions = async (cb) => {
+        if (Platform.OS === 'android') {
+            //      const apiLevel = await DeviceInfo.getApiLevel();
+
+            if (20 < 31) {
+                const granted = await PermissionsAndroid.request(
+                    PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+                    {
+                        title: 'Location Permission',
+                        message: 'Bluetooth Low Energy requires Location',
+                        buttonNeutral: 'Ask Later',
+                        buttonNegative: 'Cancel',
+                        buttonPositive: 'OK',
+                    },
+                );
+                cb(granted === PermissionsAndroid.RESULTS.GRANTED);
+            } else {
+                const result = await requestMultiple([
+                    PERMISSIONS.ANDROID.BLUETOOTH_SCAN,
+                    PERMISSIONS.ANDROID.BLUETOOTH_CONNECT,
+                    PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION,
+                ]);
+
+                const isGranted =
+                    result['android.permission.BLUETOOTH'] ===
+                    PermissionsAndroid.RESULTS.GRANTED &&
+                    result['android.permission.BLUETOOTH_SCAN'] ===
+                    PermissionsAndroid.RESULTS.GRANTED &&
+                    result['android.permission.ACCESS_FINE_LOCATION'] ===
+                    PermissionsAndroid.RESULTS.GRANTED;
+
+                cb(isGranted);
+            }
+        } else {
+            cb(true);
+        }
+    };
+
+    const openModal = async () => {
+        requestPermissions((isGranted) => {
+            if (isGranted) {
+                // scans();
+                //         setIsModalVisible(true);
+            }
+            {
+                scan ? alert('the Android Permission is Granted...' + isGranted)
+                    : null
+            }
+        });
+    };
+
+    function scans() {
+        return manager.startDeviceScan(null, null, (error, device) => {
+            if (error) {
+                //                 console.log(error);
+                console.log('error acquired....');
+            }
+            console.log(device.id);
+            console.log(device.name);
+
+
+            //                    manager.stopDeviceScan()
+            // if (device.name === 'realme Buds Wireless 2') {
+            //   setAvailableDevice(device.name);
+            //   setAvailableDeviceId(device.id);
+
+            //   console.log(device.name);
+            //   console.log(device.id);
+            // manager.connectToDevice(device.id)
+            //   .then((device) => {
+            //     // Device connected
+            //   })
+            //   .catch((error) => {
+            //     // Handle error
+            //   });
+            // manager.stopDeviceScan();
+            // }
+            // Handle the device object here, for example by adding it to an array
+        });
+    }
+
+    const connect = () => {
+        return BleManager.connectToDevice(device.id)
+            .then((device) => {
+                // Device connected
+                console.log('device  Connected....')
+            })
+            .catch((error) => {
+                // Handle error
+            });
+
+    }
+
+
+
+    return (
+        <View
+            style={{
+                flex: 1,
+                backgroundColor: '#0A2647'
+            }}
+        >
+            <View style={styles.textContainer}>
+                <View style={styles.leftContainer}>
+                    <Text style={styles.clickButtonText}>{isEnabled ? 'Bluetooth On' : 'Bluetooth Off'}</Text>
+                </View>
+
+                <View
+                    style={styles.rightContainer}>
+                    <Switch
+                        trackColor={{ false: '#767577', true: '#91D8E4' }}
+                        thumbColor={isEnabled ? 'white' : '#f4f3f4'}
+                        ios_backgroundColor="#3e3e3e"
+                        onValueChange={toggleSwitch}
+                        value={isEnabled}
+                    />
+                </View>
+            </View>
+            {/* <View style={styles.bottomContainer}>
+                <View>
+                    <Text style={styles.scanButton}
+                        onPress={onPressScan}
+                    >{scan ? 'Tap to Scan ' : 'Tap to Stop'} </Text>
+                </View>
+                <View>
+                    <TouchableOpacity
+                        style={styles.button}
+                        onPress={connect}
+                        activeOpacity={0.6}
+                    >
+                        <Text style={styles.scanText}>
+                            {'Connect'}
+                        </Text>
+                    </TouchableOpacity>
+                </View>
+            </View> */}
+            <View style={styles.bottomContainer}>
+                <TouchableOpacity
+                    style={styles.button}
+                    onPress={onPressScan}
+                    activeOpacity={0.6}
+                >
+                    <Text style={styles.scanText}>
+                        {scan ? 'Scan' : 'Stop'}
+                    </Text>
+                </TouchableOpacity>
+            </View>
+            {allDevices.map((user) => (
+                <View style={styles.subContainer}>
+                    <View id={user.id}
+                        style={{ flexDirection: 'row', marginTop: 2, }}
+                    >
+                        <Text style={[styles.textStyle, { flex: 1.5, paddingLeft: 40, }]}>{user.name}</Text>
+                        <Text style={[styles.textStyle, { textAlign: 'center', }]} >Pair</Text>
+
+                    </View>
+                </View>
+            ))}
+
+        </View>
+    )
+}
+########################################### Files Extracting ##########################################
+
+import { useState, useEffect } from 'react';
+import RNFS from 'react-native-fs';
+import { SafeAreaView, Text, View, FlatList, StyleSheet } from 'react-native';
+export function Home({ navigation }) {
+    const [files, setFiles] = useState([]);
+    // const folderPath = RNFS.DocumentDirectoryPath + "/assets";
+
+    // const makeDirectory = async (folderPath) => {
+    //   await RNFS.mkdir(folderPath); //create a new folder on folderPath
+    // };
+
+    // const folderPath1 = RNFS.DocumentDirectoryPath + "/values";
+
+    // const makeDirectory1 = async (folderPath1) => {
+    //   await RNFS.mkdir(folderPath1); //create a new folder on folderPath
+    // };
+
+    // useEffect(() => {
+    //   makeDirectory(folderPath);
+    //   makeDirectory(folderPath1); //execute this function on first mount
+    //   getFileContent(RNFS.DocumentDirectoryPath); //this function was defined in the previous example
+    // }, []);
+    const getFileContent = async (path) => {
+        const reader = await RNFS.readDir(path);
+        setFiles(reader);
+    };
+    useEffect(() => {
+        getFileContent(RNFS.DocumentDirectoryPath); //run the function on the first render.
+    }, []);
+    //this component will render our list item to the UI
+    const Item = ({ name, isFile }) => {
+        return (
+            <View>
+                <Text style={{ fontSize: 20 }}>Name: {name}</Text>
+                <Text> {isFile ? "It is a file" : "It's a folder"}</Text>
+            </View>
+        );
+    };
+    const renderItem = ({ item, index }) => {
+        return (
+            <View >
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: 'green' }}>{index}</Text>
+                {/* The isFile method indicates whether the scanned content is a file or a folder*/}
+                <Item name={item.name} isFile={item.isFile()} />
+            </View>
+        );
+    };
+    // creating files
+    var datas = "0x9100:0x04:100.0:1000:100:100:1.35:100:25:0.0:200:50"
+    const filePath = RNFS.DocumentDirectoryPath + "/joke.txt"; //absolute path of our file
+    const fileContent = datas;
+
+    const makeFile = async (filePath, content) => {
+        try {
+            //create a file at filePath. Write the content data to it
+            await RNFS.writeFile(filePath, content, "utf8");
+            console.log("written to file");
+        } catch (error) { //if the function throws an error, log it out.
+            console.log(error);
+        }
+    };
+    //extra code removed for brevity..
+    useEffect(() => {
+        makeFile(filePath, fileContent);
+        getFileContent(RNFS.DocumentDirectoryPath);
+    }, []);
+
+    // Reading Files
+    const filePath1 = RNFS.DocumentDirectoryPath + "/joke.txt";
+    const [fileData, setFileData] = useState();
+    const [fileId, setFileId] = useState();
+    const [fileName, setFilName] = useState();
+
+
+    const readFile = async (path) => {
+        const response = await RNFS.readFile(path);
+        setFileData(response); //set the value of response to the fileData Hook.
+    };
+    useEffect(() => {
+        readFile(filePath1);
+    }, []);
+ 
+    const Marking = () => {
+        const [value, setValue] = useState()
+        const [array, setArray] = useState([10, 2, 3, 4, 5, 6])
+        let text = "0x9100:0x04:100.0:1000:100:100:1.35:100:25:0.0:200:50:5.68:300:75:0.0:500:50:0.0:500:50:0.0:500:50:0.0:500:50:0.0:500:50";
+        const myArray = text.split(":");
+        let temp = 1;
+        let offset = 1;
+        let gate = 1;
+        let values = new Array();
+        myArray.map((n, index) => {
+            if (n === '0x9100') {
+                // console.log('Slot_1 Ch_1', n)
+                values.push(['Slot_1 Ch_1',n])
+            }
+            else if (n === '0x04') {
+                // values.push('  Max_num_of_subpulse: ' + n)
+                values.push(['Max_num_of_subpulse',n])
+
+
+            }
+            else if (n === '100.0') {
+            //     values.push('  max_freq: ' + n)
+            values.push(['max_freq' , n])
+
+            }
+            else if (n === '1000') {
+                values.push(['Max_dur' , n])
+            }
+            else if (n === '100' && temp === 1) {
+                values.push(['  Max_duty' , n]);
+                temp = 2
+
+            }
+            else if (n === '100' && temp === 2) {
+                values.push(['Max_offset' , n])
+                temp = 3
+            }
+            else if (offset === offset && gate < 4) {
+                console.log('subPulse_' + offset + ' freq ' + n)
+                values.push(['subPulse_' + offset + ' freq ' , n])
+
+                //  offset==2;
+                gate = gate + 1;
+            }
+            if (gate === 4) {
+                gate = 1
+                offset = offset + 1
+            }
+
+        })
+        return (
+            <View>
+                <Text style={{ color: 'white' }} >VAlue : {values} </Text>
+
+            </View>
+            //     <View style={styles.container}>
+            //     <View style={styles.subContainer}>
+            //         <View style={{ flexDirection: 'row' }}>
+            //             <Text style={[styles.textStyle, { flex: 1.5, paddingLeft: 40 }]}>{item.name}</Text>
+            //             <Text style={[styles.textStyle, { textAlign: 'left' }]}>: {item?.data}</Text>
+            //         </View>
+            //     </View>
+            // </View>
+        )
+    }
+
+
+    return (
+        <SafeAreaView style={{ backgroundColor: 'black', flex: 1 }} >
+            {/*FlatList code to render file paths.*/}
+            {/*renderItem function was defined earlier in this article*/}
+            {/* <FlatList
+                data={files}
+                renderItem={renderItem}
+                keyExtractor={(item) => item.name}
+            /> */}
+            <Text style={{ fontSize: 20, fontWeight: 'bold', color: 'green' }}>{fileData}</Text>
+            {/* <Text style={{ fontSize: 20, fontWeight: 'bold', color: 'green' }}>{value}</Text> */}
+
+            <Marking />
+        </SafeAreaView>
+    );
+
+}
+const styles = StyleSheet.create({
+
+    container: {
+        flex: 1,
+        backgroundColor: '#FFFFFF',
+        alignItems: 'center',
+        justifyContent: 'center',
+        borderWidth: 1,
+        borderColor: "#0A2647",
+        backgroundColor: '#0A2647'
+    },
+    subContainer: {
+        width: 350,
+        height: 50,
+        borderWidth: 1,
+        borderColor: "black",
+        margin: 2,
+        backgroundColor: '#BADAE9',
+        color: 'white',
+    },
+    textStyle: {
+        fontSize: 15,
+        color: '#0A2647',
+        flex: 1,
+        // color: 'white',
+        paddingTop: 11,
+        justifyContent: 'center',
+        fontWeight: 'bold'
+    },
+
+
+});
+
+

@@ -1,0 +1,245 @@
+import React, { useState} from "react";
+import {View,Text, Modal,Pressable,StyleSheet,TouchableOpacity,TextInput,ScrollView } from 'react-native';
+import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import LinearGradient from 'react-native-linear-gradient';
+export const Details = ({ navigation, route }) => {
+    const { msg1, msg2 } = route.params;
+    console.log(msg1,msg2);
+    const [showwarning,setShowwarning]=useState(false);
+    const [data,setData]=useState('');
+    const [item,setItem]=useState([]);
+    let repeat = msg2.slice(-2);
+    // console.log(repeat);
+    let c=parseInt(repeat, 16);
+    // console.log(c);
+    const a = [[1.35, 100, 25], [0.0, 200, 50], [5.68, 300, 75], [0.0, 500, 50]];
+    const b=[];
+    for (let i = 0; i < c; i++) {
+        b.push(a[i % a.length]);
+
+    }
+    // console.log(b);
+    let arr = b.concat.apply([], b);
+    // console.log(arr);
+    const values = [];
+    let offset = 1;
+    let gate = 1;
+    if(c!==0){
+        for (let i = 0; i <(arr.length); i++) {
+            if (gate < 4) {
+                if (gate === 1) {
+                    // console.log('SubPulse_' + offset + '_freq', arr[i])
+                    values.push(['SubPulse_' + offset + '_freq', arr[i]])
+                }
+                else if (gate === 2) {
+                    // console.log('SubPulse_' + offset + '_dur', arr[i])
+                    values.push(['SubPulse_' + offset + '_dur', arr[i]])
+                }
+                else if (gate === 3) {
+                    // console.log('SubPulse_' + offset + '_duty', arr[i])
+                    values.push(['SubPulse_' + offset + '_duty', arr[i]])
+                }
+                gate = gate + 1;
+            }
+            if (gate == 4) {
+                gate = 1;
+                offset = offset + 1
+            }
+        }
+    }
+    console.log(values);
+    // setItem(values);
+    const onPressHandler =() =>{
+        console.log('Press_1');
+        setShowwarning(true);
+    }
+    const onPressHandler1 =()=>{
+        console.log('Press_2');
+        setShowwarning(false);
+    }
+    const handleInputChange = (text) => {
+        if (text) {
+          setData(text);
+        }
+        else{
+          setData('');
+        }
+      };
+    return (
+        <View style={{ flex: 1}}>
+            <Modal visible={showwarning} transparent onRequestClose={()=>setShowwarning(false)} >
+            <View style={styles.centered_view}>
+                <View style={styles.warning_modal}>
+                    <TouchableOpacity  onPress={() => setShowwarning(false)}>
+                        <Text style={{paddingLeft:2,marginTop:4,marginLeft:210,color:'black',width:30,textAlign:'center',borderRadius: 2, borderWidth: 1, borderColor: 'black'}}>X</Text>
+                    </TouchableOpacity>
+                    <View style={styles.warning_body}>
+                    <Text style={{paddingBottom:8,fontWeight:'bold'}}>Enter Maximum Subpulse :</Text>
+                    <TextInput style={styles.input}  onChangeText={handleInputChange} />
+                    </View>
+                    <Pressable onPress={() => onPressHandler1()} style={styles.warning_button}>
+                        <Text style={styles.texts}><MaterialIcons name={'done'} size={36} color={'white'}/></Text>
+                    </Pressable>
+                </View>
+            </View>
+            </Modal>
+            <View
+                style={{
+                    display: 'flex',
+                    width: 380, height: 60, flexDirection: 'row', alignItems: 'center', justifyContent: 'center'
+                }}>
+                <Text style={styles.text1}>
+                    <FontAwesome5 name={'arrow-left'} size={20} color={'black'} onPress={() => {
+                        navigation.navigate("Extraction");
+                    }} />
+                </Text>
+                <Text style={styles.text2}>Details</Text>
+                <Text style={styles.text2}></Text>
+                {/* <Text style={styles.text3}>
+                    <MaterialIcons name={'done-all'} size={30} color={'green'} onPress={sharesave} />
+                </Text> */}
+            </View>
+            <View style={{ backgroundColor: '#3C6255', alignItems: 'center' }}>
+            <LinearGradient start={{x: 0, y: 1}} end={{x: 1, y: 0}} colors={['#0E5E6F', '#3A8891', '#192F6A']}>
+                <ScrollView>
+                    <View style={styles.container} >
+                        <View style={styles.subContainer} >
+                            <View style={{ flexDirection: 'row' }}>
+                                <Text style={[styles.textStyle, { flex: 1.5, paddingLeft: 40, }]} >{'Slot Channel'}</Text>
+                                <Text style={[styles.textStyle, { margin: 0, padding: 0 }]} >{msg1}</Text>
+                            </View>
+                        </View>
+                        <View style={styles.subContainer} >
+                            <View style={{ flexDirection: 'row' }}>
+                                <Text style={[styles.textStyle, { flex: 1.5, paddingLeft: 40, }]} >{'Max_Num_of_SubPulse'}</Text>
+                                <Text style={[styles.textStyle, { margin: 0, padding: 0 }]} >{msg2}</Text>
+                            </View>
+                        </View>
+                        <View style={styles.subContainer} >
+                            <View style={{ flexDirection: 'row' }}>
+                                <Text style={[styles.textStyle, { flex: 1.5, paddingLeft: 40, }]} >{'Max_frequency'}</Text>
+                                <Text style={[styles.textStyle, { margin: 0, padding: 0 }]} >{'100.0'}</Text>
+                            </View>
+                        </View>
+                        <View style={styles.subContainer} >
+                            <View style={{ flexDirection: 'row' }}>
+                                <Text style={[styles.textStyle, { flex: 1.5, paddingLeft: 40, }]} >{'Max_duration'}</Text>
+                                <Text style={[styles.textStyle, { margin: 0, padding: 0 }]} >{'100'}</Text>
+                            </View>
+                        </View>
+                        <View style={styles.subContainer} >
+                            <View style={{ flexDirection: 'row' }}>
+                                <Text style={[styles.textStyle, { flex: 1.5, paddingLeft: 40, }]} >{'Max_duty'}</Text>
+                                <Text style={[styles.textStyle, { margin: 0, padding: 0 }]} >{'100'}    </Text>
+                            </View>
+                        </View>
+                    </View>
+                    {
+                        item.map((value, index) => {
+                            return (
+                                <View key={index} style={styles.container} >
+                                    <View style={styles.subContainer} >
+                                        <View style={{ flexDirection: 'row' }}>
+                                            <Text style={[styles.textStyle, { flex: 1.5, paddingLeft: 40, }]} >{value[0]}</Text>
+                                            <View style={{ flexDirection: 'row' }}>
+                                            <Text  style={ { margin: 0, paddingRight:48,fontWeight: 'bold',color:'white'}}>{value[1]}</Text>
+                                            <Text style={{margin:0,paddingRight:40,paddingTop:8}}><FontAwesome5 name={'pen'} size={20} color={'white'} onPress={() => onPressHandler()}/></Text>
+                                            </View>
+                                        </View>
+                                    </View>
+                                </View>
+                            )
+                        })
+                    }
+                </ScrollView>
+            </LinearGradient>
+            </View>
+        </View>
+    )
+}
+const styles = StyleSheet.create({
+    body: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    text: {
+        fontSize: 40,
+        fontWeight: 'bold',
+    },
+    container: {
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
+    subContainer: {
+        width: 390,
+        height: 50,
+        color: 'white',
+    },
+    textStyle: {
+        fontSize: 15,
+        color: 'white',
+        flex: 1,
+        paddingTop: 11,
+        justifyContent: 'center',
+        fontWeight: 'bold'
+    },
+    text1: {
+        flex: 1, marginLeft: 15
+    },
+    text2: {
+        flex: 1, fontSize: 20, textAlign: 'center', color: 'black', fontWeight: 'bold', letterSpacing: 5
+    },
+    text3: {
+        flex: 1, marginRight: 10, textAlign: 'right'
+    },
+    texts:{
+        color:'white',
+        fontSize:15,
+        margin:10,
+        textAlign:'center',
+        marginTop:5
+    },
+    centered_view:{
+        flex:1,
+        justifyContent:'center',
+        alignItems:'center',
+        backgroundColor:'#00000099'
+    },
+    warning_modal:{
+        width:250,
+        height:200,
+        backgroundColor:'#D6D6D6',
+        borderWidth:1,
+        borderColor:'#000',
+        // borderRadius:20,
+     },
+     warning_body:{
+        height:150,
+        justifyContent:'center',
+        alignItems:'center',
+     },
+     warning_button:{
+        backgroundColor:'#46A5AF',
+        width:60,
+        height:45,
+        textAlign:'center',
+        marginLeft:95,
+        marginTop:-25,
+        paddingTop:1
+        // borderBottomLeftRadius:10,
+        // borderBottomRightRadius:10,
+     },
+     input:{
+        borderWidth:1,
+        width:200,
+        borderColor:'#555',
+        marginBottom:10,
+   }
+})
+
+
+
+
+

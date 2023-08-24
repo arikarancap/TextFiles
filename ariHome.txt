@@ -1,0 +1,346 @@
+import React, { useState } from 'react';
+import { View, Text, Image, StyleSheet, PermissionsAndroid, ToastAndroid, Platform, TouchableOpacity, StatusBar, Dimensions ,LogBox} from "react-native";
+import { assets, COLORS, SHADOWS, SIZES, FONTS } from '../../constants';
+import BluetoothStateManager from 'react-native-bluetooth-state-manager';
+import { SliderBox } from "react-native-image-slider-box";
+// import { ImageSlider } from '../components';
+import { FlatListSlider } from 'react-native-flatlist-slider';
+import { ScrollView } from 'react-native-gesture-handler';
+LogBox.ignoreAllLogs(true);
+
+export default (Preview = ({
+    style,
+    item,
+    imageKey,
+    onPress,
+    index,
+    active,
+    local,
+}) => {
+    return (
+        <TouchableOpacity
+            style={[styles.videoContainer]}
+            onPress={() => onPress(item)}>
+            <View style={[styles.imageContainer, styles.shadow]}>
+                <Image
+                    style={[styles.videoPreview, active ? { height: 240 } : { height: 120 }]}
+                    source={{ uri: item[imageKey] }}
+                />
+            </View>
+            <Text style={styles.desc}>{item.desc}</Text>
+        </TouchableOpacity>
+    );
+});
+
+const styles = StyleSheet.create({
+    videoContainer: {
+        width: 300,
+        paddingVertical: 28,
+        //   justifyContent: 'center',
+        //   alignItems: 'center',
+        marginRight: 10,
+    },
+    videoPreview: {
+        width: 275,
+        height: 155,
+        borderRadius: 8,
+        resizeMode: 'cover',
+    },
+    desc: {
+        fontSize: 14,
+        letterSpacing: 0,
+        lineHeight: 24,
+        marginTop: 18,
+    },
+    imageContainer: {
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    shadow: {
+        ...Platform.select({
+            ios: {
+                shadowColor: 'black',
+                shadowOffset: { width: 0, height: 1 },
+                shadowOpacity: 0.1,
+                shadowRadius: 5,
+            },
+            android: {
+                elevation: 5,
+            },
+        }),
+    },
+});
+
+export function Home({ navigation }) {
+    const windowWidth = Dimensions.get('window').width;
+    const windowHeight = Dimensions.get('window').height;
+    const [isEnabled, setIsEnabled] = useState(false);
+    const [devices, setDevices] = useState({
+        images: [
+            {
+                image: 'https://images.unsplash.com/photo-1567226475328-9d6baaf565cf?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=400&q=60',
+                desc: 'Silent Waters in the mountains in midst of Himilayas',
+            },
+            {
+                image: "https://source.unsplash.com/1024x768/?nature",
+                desc: 'Silent Waters in the mountains in midst of Himilayas',
+            },
+            {
+                image: "https://source.unsplash.com/1024x768/?water",
+                desc: 'Silent Waters in the mountains in midst of Himilayas',
+            },
+            {
+                image: "https://source.unsplash.com/1024x768/?girl",
+                desc: 'Silent Waters in the mountains in midst of Himilayas',
+            },
+            {
+                image: "https://source.unsplash.com/1024x768/?tree",
+                desc: 'Silent Waters in the mountains in midst of Himilayas',
+            },
+
+        ]
+    });
+    const [selectedDevice, setSelectedDevice] = useState(null);
+    const enable = () => {
+        return BluetoothStateManager.enable().then((result) => {
+            // do something...
+            console.log("enable");
+        });
+    };
+    const disable = () => {
+        return BluetoothStateManager.disable().then((result) => {
+            // do something...
+            console.log("disable");
+        });
+    };
+    const requestPermissions = async (cb) => {
+        if (Platform.OS === "android") {
+            //      const apiLevel = await DeviceInfo.getApiLevel();
+            if (20 < 31) {
+                const granted = await PermissionsAndroid.request(
+                    PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+                    {
+                        title: "Location Permission",
+                        message: "Bluetooth Low Energy requires Location",
+                        buttonNeutral: "Ask Later",
+                        buttonNegative: "Cancel",
+                        buttonPositive: "OK",
+                    }
+                );
+                cb(granted === PermissionsAndroid.RESULTS.GRANTED);
+            } else {
+                const result = await requestMultiple([
+                    PERMISSIONS.ANDROID.BLUETOOTH_SCAN,
+                    PERMISSIONS.ANDROID.BLUETOOTH_CONNECT,
+                    PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION,
+                ]);
+                const isGranted =
+                    result["android.permission.BLUETOOTH"] ===
+                    PermissionsAndroid.RESULTS.GRANTED &&
+                    result["android.permission.BLUETOOTH_SCAN"] ===
+                    PermissionsAndroid.RESULTS.GRANTED &&
+                    result["android.permission.ACCESS_FINE_LOCATION"] ===
+                    PermissionsAndroid.RESULTS.GRANTED;
+                cb(isGranted);
+            }
+        } else {
+            cb(true);
+        }
+    };
+
+    const toggleSwitch = () => {
+        setIsEnabled((previousState) => !previousState);
+        if (isEnabled === false) {
+            enable();
+            ToastAndroid.showWithGravityAndOffset(
+                'Bluetooh is Enabled'
+                , ToastAndroid.LONG,
+                ToastAndroid.BOTTOM,
+                -100, 50)
+        }
+        if (isEnabled === true) {
+            disable();
+            ToastAndroid.showWithGravityAndOffset(
+                'Bluetooh is Disabled'
+                , ToastAndroid.SHORT,
+                ToastAndroid.BOTTOM,
+                -100, -500)
+        }
+    };
+
+    const images = [
+        "https://source.unsplash.com/1024x768/?nature",
+        "https://source.unsplash.com/1024x768/?water",
+        "https://source.unsplash.com/1024x768/?girl",
+        "https://source.unsplash.com/1024x768/?tree",
+    ]
+    // const images1 = [
+    //     {
+    //         banner: require('../../assets/images/bluetoothimage.png'),
+    //         desc: 'Silent Waters in the mountains in midst of Himilayas',
+    //     },
+    //     {
+    //         banner: require('../../../assets/images/bluetoothimage.png'),
+    //         desc:
+    //             'Red fort in India New Delhi is a magnificient masterpeiece of humans',
+    //     },
+    // ]
+    // React.useEffect(() => {
+    //     // useFetch()
+    // }, [windowWidth, windowHeight])
+    const [orientation, setOrientation] = useState("PORTRAIT");
+
+    React.useEffect(() => {
+        Dimensions.addEventListener('change', ({ window: { width, height } }) => {
+            if (width < height) {
+                setOrientation("PORTRAIT")
+            } else {
+                setOrientation("LANDSCAPE")
+
+            }
+        })
+
+    }, []);
+    const [currentImageIndex, setCurrentImageIndex] = useState(0);
+    return (
+        <View style={{ flex: 1, backgroundColor: COLORS.white, }} >
+            <ScrollView>
+                <StatusBar
+                    // #61dafb
+                    animated={true}
+                    backgroundColor={'#0366b1'}
+                    barStyle={'slide'}
+                    showHideTransition={0}
+                    hidden={false}
+                />
+                <View>
+                    <Text
+                        style={{
+                            fontSize: 15, fontWeight: 300,
+                            color: 'black', textAlign: 'left',
+                            marginLeft: 10, marginTop: 10,
+                            letterSpacing: 2
+                        }}
+                    >Discover Our Community{ }
+                    </Text>
+                </View>
+
+                <View style={{ marginTop: 10, width: '100%', flex: 1 }} >
+                    <SliderBox
+                        images={images}
+                        autoplay
+                        circleLoop
+                        // dotColor="red"
+                        resizeMethod={'resize'}
+                        resizeMode={'cover'}
+                        sliderBoxHeight={300}
+                        parentWidth={windowWidth}
+                        ImageComponentStyle={{ borderRadius: 15, width: '100%', marginTop: 5 }}
+                        imageLoadingColor="#2196F3"
+                        onCurrentImagePressed={index =>
+                            console.warn(`image ${index} pressed`)
+                        }
+                        currentImageEmitter={(index) => setCurrentImageIndex(index)}
+                        paginationBoxStyle={{
+                            position: 'absolute',
+                            bottom: 0,
+                            padding: 0,
+                            alignItems: 'center',
+                            alignSelf: 'center',
+                            justifyContent: 'center',
+                            paddingVertical: 10,
+                            height: 40,
+                            // width: 200,
+                        }}
+                        // inactiveDotColor={'red'}
+                        dotStyle={{
+                            width: 10,
+                            height: 10,
+                            borderRadius: 5,
+                            marginHorizontal: 0,
+                            padding: 0,
+                            margin: 0,
+                            backgroundColor: "rgba(128, 128, 128, 0.92)"
+                        }}
+                    />
+
+                    {/* <FlatListSlider
+                    data={devices.images}
+                    height={300}
+                    // width={400}
+                    timer={5000}
+
+                    // component={<Preview active={true}  />}
+                    onPress={item => alert(JSON.stringify(item))}
+                    contentContainerStyle={{ paddingHorizontal: 0 }}
+                    indicatorContainerStyle={{ position: 'absolute', bottom: 20 }}
+                    indicatorActiveColor={'#8e44ad'}
+                    indicatorInActiveColor={'#ffffff'}
+                    indicatorActiveWidth={30}
+                    animation
+                // loop={true}
+                // autoscroll={true}
+                /> */}
+                </View>
+                <View
+                    style={{ backgroundColor: '#EAEFF2', height: 100, margin: 10, borderRadius: 15 }}
+
+                >
+                    <Text style={{
+                        fontSize: 15, fontWeight: 500,
+                        color: 'black', textAlign: 'left',
+                        marginLeft: 5, marginTop: 5,
+                        letterSpacing: 2
+                    }} > Summary</Text>
+                    <Text style={{ fontSize: 13, textAlign: 'justify', color: 'black', }} >                A company summary might include your mission statement, goals, target market, products, and services, as well as how it stands out from competitors.</Text>
+                </View>
+                <View
+                    style={{ backgroundColor: '#EAEFF2', height: 150, margin: 10, borderRadius: 15 }}
+                >
+                    <Text style={{
+                        fontSize: 15, fontWeight: 500,
+                        color: 'black', textAlign: 'left',
+                        marginLeft: 5, marginTop: 5,
+                        letterSpacing: 2
+                    }} > Brief description of the company</Text>
+                    <Text style={{ fontSize: 13, textAlign: 'justify', color: 'black', }} >                A company description is an overview or summary of a business. It's an important part of a business plan that often briefly describes an organization's history, location, mission statement, management personnel and, when appropriate, legal structure.</Text>
+                </View>
+            </ScrollView>
+        </View>
+    );
+}
+
+const Styles = StyleSheet.create({
+    body: {
+        justifyContent: "center",
+        alignItems: "center",
+        flex: 1,
+        backgroundColor: "#0A2647",
+    },
+    text: {
+        color: COLORS.darkBlue,
+        fontSize: 20,
+        textAlign: "center",
+        fontWeight: "bold",
+        marginTop: 50,
+    },
+    insideContainer: {
+    },
+    subContainer: {
+        width: 350,
+        height: 50,
+        borderWidth: 1,
+        borderColor: "black",
+        margin: 2,
+        backgroundColor: "#BADAE9",
+        color: "white",
+    },
+
+    blutoothImage: {
+        width: 50,
+        height: 50,
+        borderRadius: 30,
+
+    },
+
+});

@@ -1,0 +1,12 @@
+##################    git Push      #########################
+1. git status -git staus we can check the which files are modified and unmodified,
+ using this command and we can check which branch doing the push.
+git init -initialize
+2.git add <file_name> - this command will add the All files using <git add .> 
+3. git commit -m"commit messages" - it will add the commit meassagesy
+4. git push origin master
+
+
+##################    git clone      #########################
+1.git clone https://github.com/arikarancap/example.git -go to the Your git hub repository inside there is one link. lets copy and use it
+2.npm i - it wil download the all package remain one think if you created inside another folder database (like django,mongodb) this package will not download you need to download...

@@ -1,0 +1,247 @@
+import { StyleSheet, Text, View, FlatList, TouchableOpacity, LayoutAnimation, ScrollView, Switch, TextInput } from 'react-native'
+import React, { useState, useEffect } from 'react'
+import { DATA } from '../../../constants';
+import { COLORS } from '../../../constants';
+import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
+import AntDesign from 'react-native-vector-icons/AntDesign'
+import Share from 'react-native-share';
+import { CustomButton, DropDown } from '../../../components';
+
+export const Groups = ({ navigation }) => {
+  const [inputs, setInputs] = React.useState({ email: '', password: '', datas: '', noUser: '' });
+  const [phaseDelay, setPhaseDelay] = useState(-1);
+  const [selectedItem, setSelectedItem] = useState();
+  const [editable, setEditable] = useState(false);
+  const [number, onChangeNumber] = React.useState('');
+
+  const onSelect = (item) => {
+    setSelectedItem(item);
+  }
+  let allKeys;
+  // console.log(DATA.common.groups)
+  var array = new Array();
+  DATA.common.groups.map((item, index) => {
+    array[index] = item['channels-phasedelay'].split(', ');
+    // console.log(array);
+    allKeys = Object.keys(item);
+  })
+  let values = new Array()
+  array.map((items, indexs) => {
+    let value = [];
+    items.map((item, index) => {
+      // console.log()
+      value.push(item.split(':'))
+      // values[indexs] = item.split(':')
+    })
+    values.push(value)
+
+  })
+  // console.log(values)
+
+  // console.log(allKeys)
+  let myArray = DATA.common.groups
+
+  const toPascalCase = str =>
+    str
+      .match(/[A-Z]{2,}(?=[A-Z][a-z]+[0-9]*|\b)|[A-Z]?[a-z]+[0-9]*|[A-Z]|[0-9]+/g)
+      .map(x => x.charAt(0).toUpperCase() + x.slice(1).toLowerCase())
+      .join(' ');
+  // console.log(toPascalCase('some_database_field_name'));
+  let fruits = [{ id: 1, fruit: "Mango" }, { id: 2, fruit: "Banana" }, { id: 3, fruit: "Apple" }]
+
+  return (
+    <View style={{ flex: 1 }} >
+      {/* Header */}
+      {/* <View
+        style={styles.header}>
+        <Text style={styles.text1}>
+          <FontAwesome5 name={'arrow-left'} size={20} color={'white'} onPress={() => {
+            navigation.navigate("Home");
+          }} />
+        </Text>
+        <Text style={styles.text2}>Groups</Text>
+        <Text style={styles.text3}>
+          <FontAwesome5 name={'share-alt'} size={20} color={'black'} />
+        </Text>
+      </View> */}
+      {/* Tabs */}
+      <ScrollView>
+        <View style={{ flex: 1, alignItems: 'center' }} >
+          {/* 
+          <DropDown
+            value={selectedItem}
+            data={fruits}
+            onSelect={onSelect}
+          /> */}
+          <View style={{ alignItems: 'center', margin: 5 }} >
+            {myArray.map((item, index) => {
+              // console.log(item)
+              let temp = values[index]
+              // console.log(temp)
+              let temp1 = toPascalCase(String(item['force_enable']))
+              return (
+                <View key={index} style={{ width: '75%', }}  >
+                  <View style={{ alignItems: 'center', backgroundColor: 'lightgrey', margin: 5, borderRadius: 20 }} >
+                    <View style={[styles.outerContainer, {}]} >
+                      <Text style={{
+                        color: COLORS.black, fontWeight: 'bold', fontSize: 18, marginHorizontal: 8, marginLeft: -50
+                      }}>{toPascalCase(allKeys[0])}   {item['group']}</Text>
+                      <AntDesign name={'edit'} size={25} color={'green'} style={{ marginRight: -50 }}
+                        onPress={() => { LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut) }}
+                      />
+                    </View>
+                    <View style={[styles.GroupContainer,]}>
+                      <Text style={[styles.containerText, { textAlign: 'justify', paddingLeft: 30 }]}>{toPascalCase(allKeys[2])}</Text>
+                      {editable ?
+                        <TextInput
+                          style={styles.input}
+                          onChangeText={onChangeNumber}
+                          value={temp1}
+                          placeholder="useless placeholder"
+                          keyboardType="numeric"
+                        />
+                        : <Text style={[styles.containerText, { textAlign: 'center', }]}>{toPascalCase(String(item['force_enable']))}</Text>
+                      }
+                    </View>
+                    <View style={[styles.GroupContainer,]}>
+                      <Text style={[styles.containerText, { textAlign: 'justify', paddingLeft: 30 }]}>{toPascalCase(allKeys[1])}</Text>
+                      <AntDesign name={'downcircleo'} size={30} color={phaseDelay == index ? 'green' : 'black'}
+                        style={{ width: '50%' }}
+                        onPress={() => {
+                          LayoutAnimation.configureNext(LayoutAnimation.Presets.linear)
+                          setPhaseDelay(index == phaseDelay ? -1 : index)
+                        }}
+                      />
+                    </View>
+                    <View style={{ marginTop: 10 }} >
+                      {phaseDelay == index ?
+                        temp.map((item, index) => {
+                          return (
+                            <View key={index} style={{ alignItems: 'center', }} >
+                              {index === 0 ?
+                                <View style={[styles.GroupContainer, {}]}>
+                                  <Text style={[styles.containerText, { width: '40%', textAlign: 'center', borderLeftWidth: 1, borderColor: 'black', borderTopWidth: 1, borderRightWidth: 0.5 }]}>{'Frequency'}</Text>
+                                  <Text style={[styles.containerText, { width: '40%', textAlign: 'center', borderRightWidth: 1, borderColor: 'black', borderTopWidth: 1, borderLeftWidth: 1 }]}>{'milli seconds'}</Text>
+                                </View>
+                                : null}
+                              <View style={[styles.GroupContainer, {}]}>
+                                <Text style={[styles.containerText, { width: '40%', textAlign: 'center', borderLeftWidth: 1, borderColor: 'black', borderTopWidth: 1, borderRightWidth: 0.5, borderBottomWidth: 0.5 },
+                                index == 3 ? { borderBottomWidth: 1 } : {}
+                                ]}>{toPascalCase(String(item[0]))}</Text>
+                                <Text style={[styles.containerText, { width: '40%', textAlign: 'center', borderRightWidth: 1, borderColor: 'black', borderTopWidth: 1, borderLeftWidth: 1, borderBottomWidth: 0.5 }
+                                  , index == 3 ? { borderBottomWidth: 1 } : {}
+                                ]}>{toPascalCase(String(item[1]))}</Text>
+                              </View>
+                            </View>
+                          )
+                        })
+                        : null}
+                    </View>
+                  </View>
+                </View>
+              )
+            })}
+            {/* {
+            groupArray.map((item, index) => {
+              console.log(item)
+              // console.log(item[index]);
+              return (
+                <View key={index}>
+                  <View style={styles.GroupContainer} >
+                    <Text style={[styles.headerText, { textAlign: 'justify', marginLeft: 10 }]}>{toPascalCase(item[0][0])}  {item[0][1]}  : </Text>
+                    <Text style={[styles.headerText, ]}> {item[0][1]} : </Text>
+                  </View>
+                  <View style={styles.GroupContainer}>
+                    <Text style={[styles.containerText, { textAlign: 'justify' }]}>{toPascalCase(item[1][0])}</Text>
+                    <Text style={[styles.containerText, { textAlign: 'justify' }]}>{item[1][1]}</Text>
+                  </View>
+                  <View style={[styles.GroupContainer, { borderBottomWidth: 0.2, borderColor: 'black', marginBottom: 5 }]}>
+                    <Text style={[styles.containerText, { textAlign: 'justify' }]}>{item[2][0]}</Text>
+                    <Text style={[styles.containerText, { textAlign: 'justify' }]}>{item[2][1] === true ? 'True' : item[2][1] === false ? 'False' : item[2][1]}</Text>
+                  </View>
+                </View>
+              )
+            })
+          } */}
+          </View>
+        </View>
+      </ScrollView>
+    </View >
+
+  )
+}
+const styles = StyleSheet.create({
+  text1: {
+    flex: 1, marginLeft: 15, color: COLORS.black, padding: 10
+  },
+  text2: {
+    flex: 1, fontSize: 20, textAlign: 'center', color: COLORS.white, fontWeight: 'bold', letterSpacing: 5
+
+  },
+  text3: {
+    flex: 1, marginRight: 10, textAlign: 'right', color: COLORS.black,
+  },
+  header: {
+    display: 'flex',
+    width: '100%',
+    height: 50,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: COLORS.darkBlue,
+  },
+  headerContainer: {
+    justifyContent: 'center', height: 30, marginBottom: 8, marginLeft: 20,
+  },
+  headerText: {
+    color: COLORS.black, fontWeight: 'bold', fontSize: 18
+  },
+  container: {
+    flexDirection: 'row', alignItems: 'center', justifyContent: 'space-around'
+  },
+  containerText: {
+    color: COLORS.black,
+    fontSize: 14,
+    width: '50%',
+    fontWeight: '400',
+    marginVertical: 0,
+    textAlign: 'justify',
+    // borderWidth: 1,
+    // borderColor: 'black',
+    padding: 3
+  },
+  Tab: {
+    height: 40,
+    backgroundColor: 'lightgreen',
+    // width: 180,
+    width: '46%',
+    margin: 10,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderRadius: 5,
+
+  },
+  TabText: {
+    color: COLORS.black, fontSize: 15,
+  },
+  GroupContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-around'
+  },
+  // new
+  outerContainer: {
+    flexDirection: 'row',
+    width: '100%',
+    alignItems: 'center',
+    justifyContent: 'space-around',
+    margin: 5,
+    marginBottom: 10
+  },
+  input: {
+    height: 40,
+    margin: 12,
+    borderWidth: 1,
+    padding: 10,
+  },
+})

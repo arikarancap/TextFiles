@@ -1,0 +1,137 @@
+import { convertAbsoluteToRem } from 'native-base/lib/typescript/theme/tools';
+import React, { useEffect, useState } from 'react';
+import { View, Text, Button } from 'react-native';
+import BluetoothSerial from 'react-native-bluetooth-serial';
+
+const BluetoothDevices = () => {
+  const [devices, setDevices] = useState([]);
+  const [connected, setConnected] = useState(false);
+
+  useEffect(() => {
+    BluetoothSerial.isEnabled().then((enabled) => {
+      if (!enabled) {
+        BluetoothSerial.enable();
+      }
+    });
+
+    BluetoothSerial.list().then((list) => {
+      setDevices(list);
+    });
+
+    BluetoothSerial.on('bluetoothEnabled', () => {
+      BluetoothSerial.list().then((list) => {
+        setDevices(list);
+      });
+    });
+
+    BluetoothSerial.on('bluetoothDisabled', () => {
+      setDevices([]);
+    });
+    const requestAccessFineLocationPermission = async () => {
+      const granted = await PermissionsAndroid.request(
+        PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+        {
+          title: 'Access fine location required for discovery',
+          message:
+            'In order to perform discovery, you must enable/allow ' +
+            'fine location access.',
+          buttonNeutral: 'Ask Me Later',
+          buttonNegative: 'Cancel',
+          buttonPositive: 'OK',
+        }
+      );
+      return granted === PermissionsAndroid.RESULTS.GRANTED;
+    };
+
+    BluetoothSerial.on('error', (error) => {
+      console.log(`Bluetooth error: ${error}`);
+    });
+
+    return () => {
+      BluetoothSerial.removeListener('bluetoothEnabled');
+      BluetoothSerial.removeListener('bluetoothDisabled');
+      BluetoothSerial.removeListener('error');
+    };
+  }, []);
+
+  const handleScan = () => {
+    BluetoothSerial.list().then((list) => {
+      setDevices(list);
+    });
+  };
+
+  const handleConnect = async () => {
+    const deviceAddress = 'A4:C9:39:7E:60:3C';
+    BluetoothSerial.connect(deviceAddress)
+      .then(() => {
+        console.log('Connection successful');
+      })
+      .catch((error) => {
+        console.log(`Connection failed: ${error}`);
+      });
+  };
+
+  const handleDisconnect = async () => {
+    try {
+      await BluetoothSerial.disconnect();
+      setConnected(false);
+    } catch (error) {
+      console.log(`Bluetooth error: ${error}`);
+    }
+  };
+
+  const unPaired= () => {
+    console.log('unpaired')
+    try {
+       BluetoothSerial.discoverUnpairedDevices()
+     
+      }
+     catch (error) {
+      console.log(`Bluetooth error: ${error}`);
+    }
+  }
+  
+
+  return (
+    <View>
+      <Button title="Scan for devices" onPress={handleScan} />
+      <Button title="unpaired" onPress={unPaired} />
+      {devices.map((device) => (
+        <View key={device.id}>
+          <Text>{device.name}</Text>
+          <Text>{device.address}</Text>
+        </View>
+      ))}
+      <View>
+        {connected ? (
+          <Button title="Disconnect" onPress={handleDisconnect} />
+        ) : (
+          <Button title="Connect" onPress={handleConnect} />
+        )}
+      </View>
+
+    </View>
+  );
+};
+
+export default BluetoothDevices;
+
+ BluetoothSerial.connect(device.address, { connectionTimeout: 10000 })
+            .then(() => {
+              // Connection successful, start reading
+              Toast.showShortBottom(`Connected to device ${device.name}`)
+
+              console.log('Connection successful, start reading')
+
+              BluetoothSerial.withDelimiter('\n')
+                .then(() => {
+                  BluetoothSerial.on('read', (data) => {
+                    console.log('Received data:', data);
+                  });
+                })
+                .catch((error) => console.error(error));
+            })
+            .catch((error) => {
+              // handle the error
+              console.log('Catch Error: ', error)
+            });

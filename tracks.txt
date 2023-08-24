@@ -1,0 +1,171 @@
+import { StyleSheet, Text, View, Switch, ScrollView, LayoutAnimation } from 'react-native'
+import React, { useState, useEffect } from 'react'
+import { COLORS, DATA } from '../../../constants';
+import { toPascalCase } from '../../../components';
+export const Tracks = () => {
+  const [system, setSystem] = useState('Groups');
+  const [isEnabled, setIsEnabled] = useState(false);
+  const toggleSwitch = () => {
+    setIsEnabled(previousState => !previousState);
+    LayoutAnimation.configureNext(LayoutAnimation.Presets.spring)
+  }
+
+  var arrayNormal = new Array();
+  var arraySpecial = new Array();
+  // Normal
+  DATA.common.tracks.normal.map((item, index) => {
+    // console.log(item, index);
+    // let entries = Object.entries(item);
+    let group = Object.entries(item);
+    arrayNormal[index] = group;
+  })
+  // Special
+  DATA.common.tracks.special.map((item, index) => {
+    // console.log(item, index);
+    // let entries = Object.entries(item);
+    let group = Object.entries(item);
+    arraySpecial[index] = group;
+  })
+
+  arrayNormal.map((item, index) => {
+    item.map((subItemitem, subIndex) => {
+      // console.log(typeof (item[subIndex][1]))
+    })
+  })
+
+  return (
+    <View style={{ flex: 1 }}
+    >
+      <ScrollView>
+        <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-end', margin: 10, marginRight: 10 }} >
+          <Text style={{ color: 'black', paddingHorizontal: 10, fontWeight: '500' }} >{isEnabled ? 'Maintenance Track' : 'Normal Track'}</Text>
+          <Switch
+            trackColor={{ false: '#767577', true: 'powderblue' }}
+            thumbColor={isEnabled ? 'lightgreen' : '#f4f3f4'}
+            ios_backgroundColor="#3e3e3e"
+            onValueChange={toggleSwitch}
+            value={isEnabled}
+          />
+        </View>
+        {isEnabled === true ?
+          <View>
+            {
+              arrayNormal.map((item, index) => {
+                // console.log(item)
+                return (
+                  item.map((subItem, index) => {
+                    // console.log(subItem)
+                    return (
+                      <View key={index}>
+                        <View style={styles.GroupContainer}>
+                          <Text style={[index == 0 ? styles.headerText : styles.containerText, { textAlign: 'justify', }]}>{toPascalCase(item[index][0])}</Text>
+                          {/* <Text style={[styles.containerText, { textAlign: 'justify' }]}>{item[index][1]}</Text> */}
+                          <Text style={[index == 0 ? styles.headerText : styles.containerText, { textAlign: 'justify', }]}>
+                            {
+                              typeof (item[index][1]) === 'boolean' ? item[index][1] === true ? 'True' : 'False' :
+                                typeof (item[index][1]) === 'object' ? item[index][1].map((sub, index) => {
+                                  return ("[ " + [sub][0][0] + ' , ' + [sub][0][1] + " ] ")
+                                }) : index === 0 ? toPascalCase(item[index][1]) : item[index][1]
+                            }
+                          </Text>
+                        </View>
+                        <View style={[item[index][0] === 'tones' ? { borderBottomWidth: 0.7, borderColor: 'black', margin: 10 } : null]} />
+                      </View>)
+                  })
+                )
+              })
+            }
+          </View>
+          : null}
+        {
+          isEnabled == false ?
+            <View>
+              {
+                arraySpecial.map((item, index) => {
+                  // console.log(item)
+                  return (
+                    item.map((subItem, index) => {
+                      // console.log(item.length)
+                      return (
+                        <View key={index}
+                        >
+                          <View style={styles.GroupContainer}>
+                            <Text style={[index == 0 ? styles.headerText : styles.containerText, { textAlign: 'justify', }]}>{toPascalCase(item[index][0])}</Text>
+                            {/* <Text style={[styles.containerText, { textAlign: 'justify' }]}>{item[index][1]}</Text> */}
+                            <Text style={[index == 0 ? styles.headerText : styles.containerText, {
+                              textAlign: 'justify',
+                            }]}>
+                              {
+                                typeof (item[index][1]) === 'boolean' ? item[index][1] === true ? 'True' : 'False' :
+                                  typeof (item[index][1]) === 'object' ? item[index][1].map((sub, index) => {
+                                    return ("[ " + [sub][0][0] + ' , ' + [sub][0][1] + " ] ")
+                                  }) : index === 0 ? toPascalCase(item[index][1]) : item[index][1]
+                              }
+                            </Text>
+                          </View>
+                          <View style={[item[index][0] === 'tones' ? { borderBottomWidth: 0.7, borderColor: 'black', margin: 10 } : null]} />
+                        </View>)
+                    })
+                  )
+                })
+              }
+            </View>
+            : null
+        }
+      </ScrollView>
+    </View>
+  )
+}
+
+
+const styles = StyleSheet.create({
+  text1: {
+    flex: 1, marginLeft: 15, color: COLORS.black, padding: 10
+  },
+  text2: {
+    flex: 1, fontSize: 20, textAlign: 'center', color: COLORS.white, fontWeight: 'bold', letterSpacing: 5
+
+  },
+  text3: {
+    flex: 1, marginRight: 10, textAlign: 'right', color: COLORS.black,
+  },
+  header: {
+    display: 'flex',
+    width: '100%',
+    height: 50,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: COLORS.darkBlue,
+  },
+  headerContainer: {
+    justifyContent: 'center', height: 30, marginBottom: 8, marginLeft: 20,
+  },
+  headerText: {
+    color: COLORS.black, fontWeight: 'bold', fontSize: 18, width: '50%', marginHorizontal: 8
+  },
+  container: {
+    flexDirection: 'row', alignItems: 'center', justifyContent: 'space-around'
+  },
+  containerText: {
+    color: COLORS.black, fontSize: 14, marginHorizontal: 8, width: '50%', fontWeight: '400', marginVertical: 5
+  },
+  Tab: {
+    height: 40,
+    backgroundColor: 'lightgreen',
+    // width: 180,
+    width: '46%',
+    margin: 10,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderRadius: 5,
+
+  },
+  TabText: {
+    color: COLORS.black, fontSize: 15,
+  },
+  GroupContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  }
+})

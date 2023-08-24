@@ -1,0 +1,154 @@
+import { StyleSheet, Text, View, LayoutAnimation, TextInput, ScrollView } from 'react-native'
+import React, { useState } from 'react'
+import { DATA } from '../../../constants';
+import { COLORS } from '../../../constants';
+import { toPascalCase } from '../../../components';
+import SelectDropdown from 'react-native-select-dropdown'
+const Schedules = () => {
+    const [system, setSystem] = useState('Groups');
+    const [isEnabled, setIsEnabled] = useState(false);
+    const [number, onChangeNumber] = React.useState('');
+
+    const toggleSwitch = () => {
+        setIsEnabled(previousState => !previousState);
+        LayoutAnimation.configureNext(LayoutAnimation.Presets.spring)
+    }
+    let keys
+    DATA.common.schedules.map((item, index) => {
+        keys = Object.keys(item)
+        // console.log(keys)
+    })
+
+    return (
+        <View>
+            <ScrollView>
+
+                <Text>Schedules</Text>
+                {DATA.common.schedules.map((item, index) => {
+
+                    // console.log()
+                    return (
+                        <View key={index} >
+                            <View style={styles.GroupContainer}>
+                                <Text style={[styles.containerText, { textAlign: 'justify' }]}>{toPascalCase(keys[0])}</Text>
+                                <View style={[styles.containerText, { textAlign: 'justify' }]}>
+                                    <SelectDropdown
+                                        data={item[keys[0]]}
+                                        onSelect={(selectedItem, index) => {
+                                            // console.log(selectedItem, index)
+                                        }}
+                                        buttonTextAfterSelection={(selectedItem, index) => {
+                                            return selectedItem
+                                        }}
+                                        rowTextForSelection={(item, index) => {
+                                            return item
+                                        }}
+                                        defaultButtonText='Select'
+                                        buttonStyle={{ backgroundColor: 'powderblue', height: 30, borderRadius: 10 }}
+
+                                    />
+                                </View>
+                            </View>
+                            <View style={styles.GroupContainer}>
+                                <Text style={[styles.containerText, { textAlign: 'justify' }]}>{toPascalCase(keys[1])}</Text>
+                                <Text style={[styles.containerText, { textAlign: 'justify', }]}>
+                                    {item["startTime"]}
+                                </Text>
+                            </View>
+                            <View style={styles.GroupContainer}>
+                                <Text style={[styles.containerText, { textAlign: 'justify' }]}>{toPascalCase(keys[2])}</Text>
+                                <Text style={[styles.containerText, { textAlign: 'justify', }]}>
+                                    {item["endTime"]}
+                                </Text>
+                            </View>
+                            <View>
+                                {item["groups-tracks"].map((item, index) => {
+                                    let keys1 = Object.keys(item)
+                                    // console.log(keys1)
+                                    // console.log(item)
+                                    // console.log(index)
+                                    return (
+                                        <View key={index} >
+                                            {index === 0 ?
+                                                <Text style={[styles.containerText, { textAlign: 'justify' }]}>{toPascalCase(keys[3])}</Text>
+                                                : null}
+                                            <View style={styles.GroupContainer}>
+                                                <Text style={[styles.containerText, { textAlign: 'justify', paddingLeft: 50 }]}>{keys1[0]}</Text>
+                                                <Text style={[styles.containerText, { textAlign: 'justify', }]}>{item.group}</Text>
+                                            </View>
+                                            <View style={[styles.GroupContainer, index == 3 ? { borderColor: 'black', borderBottomWidth: 1, marginBottom: 5 } : {}]}>
+                                                <Text style={[styles.containerText, { textAlign: 'justify', paddingLeft: 50 }]}>{keys1[1]}</Text>
+                                                <Text style={[styles.containerText, { textAlign: 'justify', }]}>{item.track}</Text>
+                                            </View>
+                                        </View>)
+                                })}
+                            </View>
+                        </View>
+                    )
+                })
+                }
+            </ScrollView>
+
+        </View>
+    )
+}
+
+export default Schedules;
+
+const styles = StyleSheet.create({
+    text1: {
+        flex: 1, marginLeft: 15, color: COLORS.black, padding: 10
+    },
+    text2: {
+        flex: 1, fontSize: 20, textAlign: 'center', color: COLORS.white, fontWeight: 'bold', letterSpacing: 5
+    },
+    text3: {
+        flex: 1, marginRight: 10, textAlign: 'right', color: COLORS.black,
+    },
+    header: {
+        display: 'flex',
+        width: '100%',
+        height: 50,
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center',
+        backgroundColor: COLORS.darkBlue,
+    },
+    headerContainer: {
+        justifyContent: 'center', height: 30, marginBottom: 8, marginLeft: 20,
+    },
+    headerText: {
+        color: COLORS.black, fontWeight: 'bold', fontSize: 18, width: '50%', marginHorizontal: 8
+    },
+    container: {
+        flexDirection: 'row', alignItems: 'center', justifyContent: 'space-around'
+    },
+    containerText: {
+        color: COLORS.black, fontSize: 14, marginHorizontal: 8, width: '50%', fontWeight: '400', marginVertical: 5
+    },
+    Tab: {
+        height: 40,
+        backgroundColor: 'lightgreen',
+        // width: 180,
+        width: '46%',
+        margin: 10,
+        alignItems: 'center',
+        justifyContent: 'center',
+        borderRadius: 5,
+
+    },
+    TabText: {
+        color: COLORS.black, fontSize: 15,
+    },
+    GroupContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+    },
+    input: {
+        height: 40,
+        // margin: 12,
+        padding: 10,
+        // borderColor: 'black', borderWidth: 1,
+        textAlign: 'center',
+    },
+})

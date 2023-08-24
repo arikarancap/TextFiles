@@ -1,0 +1,300 @@
+import { StyleSheet, Text, View, Switch, ScrollView, LayoutAnimation, TextInput, TextInputBase } from 'react-native'
+import React, { useState, useEffect } from 'react'
+import { COLORS, DATA } from '../../../constants';
+import { toPascalCase } from '../../../components';
+import AntDesign from 'react-native-vector-icons/AntDesign'
+import { listIndexes } from '../../../../Backend/models/model';
+export const Normal = ({ route }) => {
+    // const { name, data } = route?.params;
+    // console.log(data)
+    // console.log(msg)
+    const [isEnabled, setIsEnabled] = useState(false);
+    const [color, setColor] = useState(-1);
+    const [tones, setTones] = useState(-1);
+    const [inputs, setInputs] = React.useState({});
+    const [editable, setEditable] = useState(true);
+    const [number, onChangeNumber] = React.useState([]);
+
+    let allKeys;
+    // console.log(editedValues)
+    let Data = [];
+    DATA.common.tracks.normal.map((item, index) => {
+        // console.log('edit', Object.entries(item));
+        Data.push(Object.entries(item))
+        allKeys = Object.keys(item);
+    })
+    // console.log(Data)
+    // let arr1 = []
+
+    // useEffect(() => {
+    //     normal.map((item, index) => {
+    //         arr1.push(item)
+    //         // console.log(item)
+    //     })
+    //     onChangeNumber(arr1)
+    // }, [])
+    // console.log(number)
+    // const normal = [
+    //     ["track_name", "Normal-Track-1"],
+    //     ["track_number", 1],
+    //     ["duty_cyle_pct", 50],
+    //     ["pulse_count", 2],
+    // ]
+    // const [tracks, setTracks] = useState(normal);
+    const [editedValues, setEditedValues] = useState(Data[0].map((item, index) => item[1]));
+    console.log(editedValues)
+    const [editedValues1, setEditedValues1] = useState(Data[0].map((item, index) => item[1]));
+    console.log(editedValues)
+    const submitChannel = (index) => {
+        const updatedChannels = Data.map((item, index) => [item[0],index ==0 ? editedValues[index]: editedValues1[index]] );
+        setTracks(updatedChannels);
+    };
+
+    return (
+        <View style={{ flex: 1 }}>
+            <ScrollView>
+                <View style={{ width: '100%', justifyContent: 'center', alignItems: 'flex-end', marginRight: 30, marginTop: '1%', paddingRight: 30 }} >
+                    <AntDesign name={'edit'} size={20} color={editable == true ? 'green' : 'black'}
+                        onPress={() => {
+                            setEditable(() => !editable)
+                            submitChannel()
+                            // LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut)
+                        }}
+                    />
+                </View>
+                {
+                    Data.map((item, index) => {
+                        // console.log(item[0])
+                        return (
+                            <View key={index} >
+                                {
+                                    item[0] === 'tones' ?
+                                        <View style={{ backgroundColor: 'black', height: 20, }} >
+                                        </View>
+                                        :
+                                        <View style={{ flexDirection: 'row' }} >
+                                            <Text style={{ color: 'black' }} > {item[0][0]} </Text>
+                                            {editable ?
+                                                <TextInput
+                                                    style={styles.input}
+                                                    onChangeText={(text) => {
+                                                        const newEditedValues = index == 0 ? [...editedValues] : [...editedValues1];
+                                                        newEditedValues[index] = text;
+                                                        setEditedValues(newEditedValues);
+                                                        index === 0 ? setEditedValues(newEditedValues)
+                                                        : setEditedValues1(newEditedValues);
+
+                                                    }}
+                                            value={editedValues[index].toString()}
+                                            placeholder="useless placeholder"
+                                            keyboardType="numeric"
+                                                /> :
+                                            <Text style={{ color: "black" }} > {item[0][1]} </Text>
+                                            }
+                                        </View>
+                                }
+                            </View>
+                        )
+                    })
+                }
+                {/* {tracks.map((item, index) => {
+                    // console.log(item, index)
+                    return (
+                        <View key={index} style={{ alignItems: 'center' }}  >
+                            <View style={{
+                                height: 40, width: '100%', backgroundColor: 'lightgrey',
+                                flexDirection: 'row',
+                                alignItems: 'center',
+                                justifyContent: 'space-around',
+                                margin: 5,
+                                borderRadius: 0
+                            }} >
+                                <Text style={{ color: 'black', fontSize: 15, fontWeight: '500' }} >{toPascalCase(allKeys[0])}</Text>
+                                <Text style={{ color: 'black', fontSize: 15, fontWeight: '500' }} >{toPascalCase(String(item['track_name']))}</Text>
+                                <AntDesign name={'downcircleo'} size={20} color={color == index ? 'green' : 'black'}
+                                    onPress={() => {
+                                        setColor(index == color ? -1 : index)
+                                        LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut)
+                                    }}
+                                />
+                            </View>
+                            {
+                                color == index
+                                    ?
+                                    <View style={{
+                                        width: '95%',
+                                        backgroundColor: 'lightgrey',
+                                        borderRadius: 15,
+                                        alignItems: 'center',
+                                        margin: 5,
+                                        padding: 5
+                                    }} >
+                                        <View style={{ width: '100%', justifyContent: 'center', alignItems: 'flex-end', marginRight: '20%', marginTop: '1%' }} >
+                                            <AntDesign name={'edit'} size={20} color={color == index ? 'green' : 'black'}
+                                                onPress={() => {
+                                                    setEditable(() => !editable)
+                                                    submitChannel
+                                                    LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut)
+                                                }}
+                                            />
+                                        </View>
+                                        <View style={[styles.GroupContainer, {}]}>
+                                            <Text style={[styles.containerText, {}]}>{toPascalCase(allKeys[1])}</Text>
+                                            {editable ?
+                                                <TextInput
+                                                    style={styles.input}
+                                                    onChangeText={(text) => {
+                                                        let newEditedValues = { ...editedValues }
+                                                        newEditedValues[index] = text;
+                                                        setEditedValues(newEditedValues);
+                                                    }}
+                                                    value={editedValues[index]["track_number"]}
+                                                    placeholder="useless placeholder"
+                                                    keyboardType="numeric"
+                                                />
+                                                :
+                                                <Text style={[styles.containerText, { width: '43%' }]}>{toPascalCase(String(editedValues[index]["track_number"]))}</Text>
+                                            }
+                                        </View>
+                                        <View style={[styles.GroupContainer, {}]}>
+                                            <Text style={[styles.containerText, {}]}>{toPascalCase(allKeys[2])}</Text>
+                                            <Text style={[styles.containerText, { width: '43%' }]}>{toPascalCase(String(item["duty_cyle_pct"]))}</Text>
+                                        </View>
+                                        <View style={[styles.GroupContainer, {}]}>
+                                            <Text style={[styles.containerText, {}]}>{toPascalCase(allKeys[3])}</Text>
+                                            <Text style={[styles.containerText, { width: '43%' }]}>{toPascalCase(String(item["duty_cyle_pct"]))}</Text>
+                                        </View>
+                                        <View style={[styles.GroupContainer, {}]}>
+                                            <Text style={[styles.containerText, {}]}>{toPascalCase(allKeys[4])}</Text>
+                                            <Text style={[styles.containerText, { width: '43%' }]}>{toPascalCase(String(item["duty_cyle_pct"]))}</Text>
+                                        </View>
+                                        <View style={[styles.GroupContainer, {}]}>
+                                            <Text style={[styles.containerText, {}]}>{toPascalCase(allKeys[5])}</Text>
+                                            <Text style={[styles.containerText, { width: '43%' }]}>{toPascalCase(String(item["duty_cyle_pct"]))}</Text>
+                                        </View>
+                                        <View style={[styles.GroupContainer, {}]}>
+                                            <Text style={[styles.containerText, {}]}>{toPascalCase(allKeys[6])}</Text>
+                                            <Text style={[styles.containerText, { width: '43%' }]}>{toPascalCase(String(item["duty_cyle_pct"]))}</Text>
+                                        </View>
+                                        <View style={{ flexDirection: 'row', width: '100%', alignItems: 'center', justifyContent: 'space-around', margin: 5, marginBottom: 10 }} >
+                                            <Text style={{
+                                                color: COLORS.black,
+                                                fontWeight: 'bold',
+                                                fontSize: 18,
+                                                marginHorizontal: 8
+                                            }}>{toPascalCase(allKeys[7])}</Text>
+                                            <AntDesign name={'downcircleo'} size={30} color={tones == index ? 'green' : 'black'}
+                                                onPress={() => {
+                                                    LayoutAnimation.configureNext(LayoutAnimation.Presets.linear)
+                                                    setTones(index == tones ? -1 : index)
+                                                }}
+                                            />
+                                            <AntDesign name={'addfile'} size={25} color={color == index ? 'green' : 'black'}
+                                                onPress={() => {
+                                                    LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut)
+                                                }}
+                                            />
+                                            <AntDesign name={'edit'} size={25} color={color == index ? 'darkblue' : 'black'}
+                                                onPress={() => {
+                                                    LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut)
+                                                }}
+                                            />
+                                        </View>
+                                        <View>
+                                            {tones == index ?
+                                                item['tones'].map((item, index) => {
+                                                    return (
+                                                        <View key={index} style={{ alignItems: 'center', }} >
+                                                            {index === 0 ?
+                                                                <View style={[styles.GroupContainer, {}]}>
+                                                                    <Text style={[styles.containerText, { width: '40%', textAlign: 'center', borderLeftWidth: 1, borderColor: 'black', borderTopWidth: 1, borderRightWidth: 0.5 }]}>{'Frequency'}</Text>
+                                                                    <Text style={[styles.containerText, { width: '40%', textAlign: 'center', borderRightWidth: 1, borderColor: 'black', borderTopWidth: 1, borderLeftWidth: 1 }]}>{'milli seconds'}</Text>
+                                                                </View>
+                                                                : null}
+                                                            <View style={[styles.GroupContainer, {}]}>
+                                                                <Text style={[styles.containerText, { width: '40%', textAlign: 'center', borderLeftWidth: 1, borderColor: 'black', borderTopWidth: 1, borderRightWidth: 0.5 }]}>{toPascalCase(String(item[0]))}</Text>
+                                                                <Text style={[styles.containerText, { width: '40%', textAlign: 'center', borderRightWidth: 1, borderColor: 'black', borderTopWidth: 1, borderLeftWidth: 1 }]}>{toPascalCase(String(item[1]))}</Text>
+                                                            </View>
+                                                        </View>
+                                                    )
+                                                })
+                                                : null}
+                                        </View>
+                                    </View>
+                                    : null
+                            }
+                        </View>
+                    )
+                })
+                } */}
+            </ScrollView>
+        </View>
+    )
+}
+
+
+const styles = StyleSheet.create({
+    text1: {
+        flex: 1, marginLeft: 15, color: COLORS.black, padding: 10
+    },
+    text2: {
+        flex: 1, fontSize: 20, textAlign: 'center', color: COLORS.white, fontWeight: 'bold', letterSpacing: 5
+
+    },
+    text3: {
+        flex: 1, marginRight: 10, textAlign: 'right', color: COLORS.black,
+    },
+    header: {
+        display: 'flex',
+        width: '100%',
+        height: 50,
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center',
+        backgroundColor: COLORS.darkBlue,
+    },
+    headerContainer: {
+        justifyContent: 'center', height: 30, marginBottom: 8, marginLeft: 20,
+    },
+    headerText: {
+        color: COLORS.black, fontWeight: 'bold', fontSize: 18, width: '48%', marginHorizontal: 8
+    },
+    container: {
+        flexDirection: 'row', alignItems: 'center', justifyContent: 'space-around'
+    },
+    containerText: {
+        color: COLORS.black,
+        fontSize: 14,
+        width: '57%',
+        fontWeight: '400',
+        marginVertical: 0,
+        textAlign: 'justify',
+        // borderWidth: 1,
+        // borderColor: 'black',
+        padding: 3
+    },
+    Tab: {
+        height: 40,
+        backgroundColor: 'lightgreen',
+        // width: 180,
+        width: '46%',
+        margin: 10,
+        alignItems: 'center',
+        justifyContent: 'center',
+        borderRadius: 5,
+
+    },
+    TabText: {
+        color: COLORS.black, fontSize: 15,
+    },
+    GroupContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+    },
+    input: {
+        height: 40,
+        margin: 12,
+        borderWidth: 1,
+        padding: 10,
+    },
+})
